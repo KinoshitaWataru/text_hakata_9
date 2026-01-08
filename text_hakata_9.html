@@ -1,0 +1,2479 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InTEx: Interactive TExt gallery </title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background: #fafafa;
+            min-height: 100vh;
+            color: #222;
+            line-height: 1.7;
+        }
+        
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 50px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 5rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 12px;
+            font-size: 16px;
+            letter-spacing: 0.1em;
+        }
+        
+        .credits {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        .credits a {
+            color: #f8bbd9;
+            text-decoration: none;
+        }
+        .credits a:hover {
+            text-decoration: underline;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, #4a1528 0%, #722f37 100%);
+            margin: -50px -50px 40px -50px;
+            padding: 40px 50px;
+            border-radius: 4px 4px 0 0;
+        }
+        
+            text-align: center;
+            margin-bottom: 40px;
+        }
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            padding: 10px 20px;
+            background: #fff;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            border: 1px solid #ddd;
+        }
+            border-color: #c00;
+            color: #c00;
+        }
+            content: '▶';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            background: #c00;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 10px;
+            padding-left: 2px;
+        }
+        
+        /* アップロードセクション */
+        .upload-section {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            padding: 32px;
+            border-radius: 4px;
+            margin-bottom: 32px;
+        }
+        
+        .upload-section h2 {
+            color: #111;
+            margin-top: 0;
+            margin-bottom: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .upload-group {
+            margin-bottom: 24px;
+        }
+        
+        .upload-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 13px;
+        }
+        
+        .file-input, .text-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #fff;
+            color: #222;
+            transition: border-color 0.2s;
+        }
+        
+        .file-input:hover, .text-input:hover,
+        .file-input:focus, .text-input:focus {
+            border-color: #999;
+            outline: none;
+        }
+        
+        .file-input::file-selector-button {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+            margin-right: 12px;
+            transition: background 0.2s;
+        }
+        
+        .file-input::file-selector-button:hover {
+            background: #111;
+        }
+        
+        .process-button {
+            background: #111;
+            color: #fff;
+            border: none;
+            padding: 14px 48px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+            margin: 32px auto 0;
+            transition: all 0.2s ease;
+        }
+        
+        .process-button:hover:not(:disabled) {
+            background: #333;
+        }
+        
+        .process-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* コンテンツセクション */
+        .content-section {
+            display: none;
+        }
+        
+        .gloss-info-banner {
+            background: #f8f8f8;
+            border-left: 3px solid #333;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #555;
+        }
+        
+        .gloss-info-banner strong {
+            color: #222;
+        }
+        
+        .gloss-info-banner a {
+            color: #333;
+            text-decoration: underline;
+        }
+        
+        .status-bar {
+            background: #f8f8f8;
+            padding: 14px 18px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        
+        .status-info {
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-info span {
+            color: #111;
+            font-weight: 600;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #333;
+        }
+        
+        /* 連続再生コントロール */
+        .playback-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 32px;
+            gap: 12px;
+        }
+        
+        .play-all-button, .download-button {
+            background: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .play-all-button:hover, .download-button:hover {
+            border-color: #333;
+            background: #333;
+            color: #fff;
+        }
+        
+        .play-all-button.playing {
+            background: #333;
+            color: #fff;
+            border-color: #333;
+        }
+        
+        .play-all-button .button-icon, .download-button .button-icon {
+            font-size: 14px;
+        }
+        
+        /* 例文リスト */
+        .example-list {
+            margin-top: 24px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .example-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .example-list::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+        
+        .example-list::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+        
+        .example-item {
+            margin: 0;
+            padding: 20px 24px;
+            background: #fff;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+        
+        .example-item:first-child {
+            border-top: 1px solid #eee;
+        }
+        
+        .example-item:hover {
+            background: #f8f8f8;
+        }
+        
+        .example-item.playing {
+            background: #f0f0f0;
+        }
+        
+        .example-number {
+            font-weight: 600;
+            color: #333;
+            margin-right: 12px;
+            font-size: 14px;
+        }
+        
+        .speaker-name {
+            font-weight: 500;
+            color: #666;
+            font-size: 13px;
+            margin-left: 4px;
+        }
+        
+        .interlinear-container {
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+            line-height: 1.8;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .interlinear-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5em;
+        }
+        
+        .word-group {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-right: 0.5em;
+        }
+        
+        .original-word {
+            font-size: 16px;
+            color: #111;
+            font-weight: 500;
+            font-family: Georgia, 'Times New Roman', serif;
+        }
+        
+        .gloss-word {
+            font-size: 13px;
+            color: #666;
+            font-variant: small-caps;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .gloss-clickable {
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 2px;
+            color: #333;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+        
+        .gloss-clickable:hover {
+            color: #000;
+        }
+        
+        .translation-text {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP', sans-serif;
+            white-space: normal;
+        }
+        
+        .play-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .example-item:hover .play-icon {
+            background: #333;
+            color: #fff;
+        }
+        
+        .example-item.playing .play-icon {
+            background: #333;
+            color: #fff;
+        }
+        
+        /* グロス吹き出し */
+        .gloss-tooltip {
+            position: fixed;
+            background: #111;
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP', sans-serif;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-width: 280px;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+        }
+        
+        .gloss-tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .gloss-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #111 transparent transparent transparent;
+        }
+        
+        .gloss-tooltip-title {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        /* オーディオプレーヤー */
+        #audioPlayer {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #111;
+            padding: 16px 24px;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: none;
+            align-items: center;
+            gap: 16px;
+            color: #fff;
+            font-size: 13px;
+        }
+        
+        #audioPlayer.active {
+            display: flex;
+        }
+        
+        .audio-progress {
+            width: 160px;
+            height: 4px;
+            background-color: #444;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .audio-progress-bar {
+            height: 100%;
+            background: #fff;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        
+        /* ステータスメッセージ */
+        .status-message {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+        
+        .status-message.info {
+            background: #f0f0f0;
+            color: #333;
+            display: block;
+        }
+        
+        .status-message.success {
+            background: #f0f0f0;
+            color: #333;
+            display: block;
+        }
+        
+        .status-message.error {
+            background: #fef2f2;
+            color: #991b1b;
+            display: block;
+        }
+        
+        /* Zenodo取得機能 */
+        .zenodo-section {
+            margin-top: 12px;
+            padding: 18px;
+            background: #f8f8f8;
+            border-radius: 4px;
+        }
+        .zenodo-section label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .zenodo-row {
+            display: flex;
+            gap: 8px;
+        }
+        .zenodo-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            background: #fff;
+            color: #222;
+            transition: border-color 0.2s;
+        }
+        .zenodo-input:focus {
+            outline: none;
+            border-color: #999;
+        }
+        .zenodo-input::placeholder {
+            color: #aaa;
+        }
+        .zenodo-btn {
+            padding: 10px 20px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .zenodo-btn:hover {
+            background: #111;
+        }
+        .zenodo-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .zenodo-status {
+            font-size: 12px;
+            margin-top: 10px;
+            color: #666;
+        }
+        .zenodo-status.success {
+            color: #166534;
+        }
+        .zenodo-status.error {
+            color: #991b1b;
+        }
+        .manual-url-section {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .manual-url-section label {
+            color: #888 !important;
+        }
+        .manual-url-textarea {
+            width: 100%;
+            height: 100px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+            resize: vertical;
+            background: #fff;
+            color: #222;
+            transition: border-color 0.2s;
+        }
+        .manual-url-textarea:focus {
+            outline: none;
+            border-color: #999;
+        }
+        .manual-url-textarea::placeholder {
+            color: #aaa;
+        }
+        .manual-url-count {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+        .manual-url-count.has-urls {
+            color: #166534;
+        }
+        
+        /* small text */
+        small {
+            color: #888 !important;
+            font-size: 12px;
+        }
+        
+        /* フォントサイズ調整コントロール */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8f8f8;
+            padding: 12px 18px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+        
+        .font-size-label {
+            font-size: 13px;
+            color: #555;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .font-size-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .font-size-btn:hover {
+            background: #333;
+            color: #fff;
+            border-color: #333;
+        }
+        
+        #titleSizeSlider {
+            width: 120px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #ddd;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        #titleSizeSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #333;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        #titleSizeSlider::-webkit-slider-thumb:hover {
+            background: #111;
+        }
+        
+        #titleSizeSlider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #333;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .font-size-display {
+            font-size: 12px;
+            color: #888;
+            min-width: 45px;
+        }
+        
+        /* 背景画像プレビュー */
+        .header-image-preview {
+            margin-top: 10px;
+            max-width: 200px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .header-image-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* 背景画像変更ボタン */
+        .header-image-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .header-image-btn:hover {
+            background: #333;
+            color: #fff;
+            border-color: #333;
+        }
+        
+        /* ヘッダー背景画像対応 */
+        .header-section.has-bg-image {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+        
+        .header-section.has-bg-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .header-section.has-bg-image h1,
+        .header-section.has-bg-image .subtitle,
+        .header-section.has-bg-image .credits {
+            position: relative;
+            z-index: 1;
+        }
+        
+        audio {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <h1 id="pageTitle" style="font-size: 2.5rem;">博多方言の自然談話：その９</h1>
+            <div class="subtitle" id="pageSubtitle" style="font-size: 25px;">博多弁講座２</div>
+            <div class="credits">© InTEx: Interactive Text Gallery Generator for Field Linguists | DOI: <a href="https://doi.org/10.5281/zenodo.16732543" target="_blank">10.5281/zenodo.16732543</a></div>
+        </div>
+        
+        
+        
+        <!-- アップロードセクション -->
+        
+        
+        <!-- コンテンツセクション -->
+        <div class="content-section" id="contentSection" style="display: block;">
+            <div class="gloss-info-banner">
+                <strong>グロスをクリックすると、和訳が表示されます</strong>
+                （<a href="https://michinorishimoji.github.io/searchgloss/" target="_blank">SearchGloss</a>に基づくグロス辞書を内蔵）
+            </div>
+            
+            <!-- タイトルフォントサイズ調整 -->
+            <div class="font-size-control">
+                <label class="font-size-label">タイトルサイズ:</label>
+                <button class="font-size-btn" onclick="adjustTitleSize(-0.5)">−</button>
+                <input type="range" id="titleSizeSlider" min="1" max="8" step="0.5" value="2.5" onchange="setTitleSize(this.value)" oninput="setTitleSize(this.value)">
+                <button class="font-size-btn" onclick="adjustTitleSize(0.5)">+</button>
+                <span id="titleSizeDisplay" class="font-size-display">2.5rem</span>
+            </div>
+            
+            <!-- サブタイトルフォントサイズ調整 -->
+            <div class="font-size-control">
+                <label class="font-size-label">サブタイトルサイズ:</label>
+                <button class="font-size-btn" onclick="adjustSubtitleSize(-1)">−</button>
+                <input type="range" id="subtitleSizeSlider" min="10" max="32" step="1" value="25" onchange="setSubtitleSize(this.value)" oninput="setSubtitleSize(this.value)">
+                <button class="font-size-btn" onclick="adjustSubtitleSize(1)">+</button>
+                <span id="subtitleSizeDisplay" class="font-size-display">25px</span>
+            </div>
+            
+            <!-- 背景画像変更 -->
+            <div class="font-size-control">
+                <label class="font-size-label">背景画像:</label>
+                <label class="header-image-btn">
+                    <input type="file" id="headerImageChange" accept="image/*" style="display: none;" onchange="changeHeaderImage(this)">
+                    📷 画像を変更
+                </label>
+                <button class="font-size-btn" style="width: auto; padding: 0 12px;" onclick="removeHeaderImage()">✕ 削除</button>
+            </div>
+            
+            <div class="status-bar">
+                <div class="status-info">
+                    <div class="status-indicator"></div>
+                    ステータス: <span id="statusText">準備完了</span>
+                </div>
+                <div class="status-info">
+                    例文数: <span id="exampleCount">90</span>
+                </div>
+            </div>
+            
+            <div class="playback-controls">
+                <button id="playAllBtn" class="play-all-button" style="display: none;">
+                    <span class="button-icon">▶</span>
+                    <span class="button-text">全体音声を再生</span>
+                </button>
+                <button id="downloadBtn" class="download-button">
+                    <span class="button-icon">⬇</span>
+                    <span class="button-text">HTMLをダウンロード</span>
+                </button>
+            </div>
+            
+            <div class="example-list" id="exampleList"></div>
+        </div>
+        
+        <!-- オーディオプレーヤー -->
+        <div id="audioPlayer" class="">
+            <span>再生中：</span>
+            <span id="currentExample">例文 (88)</span>
+            <div class="audio-progress">
+                <div class="audio-progress-bar" id="progressBar" style="width: 0%;"></div>
+            </div>
+        </div>
+        
+        <audio id="audio" crossorigin="anonymous" src="https://zenodo.org/api/records/18167852/files/422_NY_dummy.wav/content?download=1"></audio>
+        
+        <!-- グロス吹き出し -->
+        <div class="gloss-tooltip" id="glossTooltip">
+            <div class="gloss-tooltip-content">
+                <div class="gloss-tooltip-title" id="glossTitle"></div>
+                <div id="glossDescription"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+                    // 埋め込まれたデータ
+                    window.embeddedData = {
+                        examples: [{"id":1,"speaker":"NY","original":"sogen=tai sore=a moo ippai ar-ru=to=tai hakataben=wa=ne","gloss":"そう=CRTN それ=TOP もう いっぱい ある-NPST=FN=CRTN 博多弁=TOP=SFP","japanese":"そうだよ。それはもう、いっぱいあるんだよ博多弁は。","originalSpaced":"そげんたい そら もお いっぱい あるったい はかたべんわね"},{"id":2,"speaker":"NY","original":"ken iti-ban are=ga sirosi-ka=te juw-ru=to=ga itumo jokozunakaku=jar=ne","gloss":"CONJ 一-番 あれ=NOM 鬱陶しい-NPST=QUOT 言う-NPST=FN=NOM いつも 横綱格=COP:NPST=SFP","japanese":"だから、一番あれが、「しろしか（鬱陶しい）」っていうのが横綱格だね。","originalSpaced":"け いちばん あれが しろしかて ゆうとが いつも よこずなかくやね"},{"id":3,"speaker":"NY","original":"uttoosi-i=toka sojaken ame=ga hur-te=mo siroshi-ka nan=ka koko=i dekimon=ga deki-te=mo siroshi-ka ne","gloss":"鬱陶しい-NPST=EXM CONJ 雨=NOM 降る-SEQ=ADD 鬱陶しい-NPST 何=INDEF ここ=DAT できもの=NOM できる-SEQ=ADD 鬱陶しい-NPST INTJ","japanese":"鬱陶しいとか。だから、雨が降っても「しろしか（鬱陶しい）」。何かここにできものができても「しろしか（鬱陶しい）」。ね。","originalSpaced":"うっとおしいとか そやけん あめが ふっても しろしか なんか ここい できもんが できても しろしか ね"},{"id":4,"speaker":"NY","original":"hito=ni tais-i-te ano hito=wa aw-ru=to sirosi-ka=tte juw-ru=ne","gloss":"人=DAT 対する-THM-SEQ あの 人=TOP 会う-NPST=QUOT 鬱陶しい-NPST=QUOT 言う-NPST=SFP","japanese":"人に対して（も言うよ）、「あの人は会うとしろしか（鬱陶しい）」って言うね。","originalSpaced":"ひとに たいして あの ひとわ あうと しろしかって ゆうね"},{"id":5,"speaker":"NY","original":"amehuri=de=mo sentakumon=no kawak-a-n=ken sirosi-ka=tte hora ne","gloss":"雨降り=COM:SEQ=ADD 洗濯物=NOM 乾く-THM-NEG=CSL 鬱陶しい-NPST=QUOT DSC INTJ","japanese":"雨降りでも洗濯物が乾かないから鬱陶しいってほら。ね。","originalSpaced":"あめふりでも せんたくもんの かわかんけん しろしかって ほら ね"},{"id":6,"speaker":"NY","original":"uttoosi-i=tte juw-ru imi=tai","gloss":"鬱陶しい-NPST=QUOT 言う-NPST 意味=CRTN","japanese":"（「しろしい」は）鬱陶しいっていう意味だよ。","originalSpaced":"うっとおしいって ゆう いみたい"},{"id":7,"speaker":"NY","original":"uun iraira=to tigaw-ru=ne uttoosi-i=jar=ne","gloss":"INTJ イライラ=QUOT 違う-NPST=SFP 鬱陶しい-NPST=COP:NPST=SFP","japanese":"うーん、（「しろしい」の意味は）イライラとは違うね。「鬱陶しい」だね  。","originalSpaced":"ううん いらいらと ちがうね うっとおしいやね"},{"id":8,"speaker":"NY","original":"ki=ga ne nan=ka harebare se-n=tte juw-ru imi=jo=ne","gloss":"気=NOM INTJ 何=INDEF 晴れ晴れ する-NEG=QUOT 言う-NPST 意味=SFP=SFP","japanese":"気が、ね。（「しろしい」は）何か晴れ晴れしないっていう意味だよね。","originalSpaced":"きが ね なんか はればれ せんって ゆう いみよね"},{"id":9,"speaker":"NY","original":"sirosi-i hito=mo un ano hito sirosi-ka=ne=tte juw-ru hora guzuguzu mono juw-tari s-sassjar-tara=ne","gloss":"鬱陶しい-NPST 人=ADD RESP あの 人 鬱陶しい-NPST=SFP=QUOT 言う-NPST DSC ONM もの 言う-EXM する-HON-EXM=SFP","japanese":"しろしい（鬱陶しい）。人（に対して）もうん。「あの人鬱陶しいね」って言う。ほら、ぐずぐずもの言ったりしなさったらね。","originalSpaced":"しろしい ひとも うん あの ひと しろしかねって ゆう ほら ぐずぐず もの ゆうたり さっしゃったらね"},{"id":10,"speaker":"NY","original":"sirosi-ka to nan=ga nor-tor-ru=kaina aa sore=to tosiue=no hito=o igaimasi=te juw-ru=to=tai=ne atti=wa igaimasi=jar=mon=tte neesannjoobo","gloss":"鬱陶しい-NPST COM 何=NOM 載る-PERF-NPST=DUB INTJ それ=COM 年上=GEN 人=ACC 「いがいまし」=QUOT 言う-NPST=FN=CRTN=SFP あっち=TOP 「いがいまし」=COP:NPST=SFP=QUOT 姉さん女房","japanese":"「しろしか」と何が載っているかな。ああそれと、年上の人を「いがいまし」って言うんだよね。「あっちはいがいましだもの」って。姉さん女房。","originalSpaced":"しろしか と なんが のっとおかいな ああ それと としうえの ひとお いがいまして ゆうったいね あっちわ いがいましやもんって ねえさんにょおぼ"},{"id":11,"speaker":"NY","original":"hoite igai=tte juw-ru kai=ga ar-ru=to zisjo hik-tara nor-tor-ru","gloss":"CONJ イガイ=QUOT 言う-NPST 貝=NOM ある-NPST=FN 辞書 引く-COND 載る-PERF-NPST","japanese":"そして、「イガイ」っていう貝があるの。辞書引いたら載っている。","originalSpaced":"ほいて いがいって ゆう かいが あると じしょ ひいたら のっとお"},{"id":12,"speaker":"NY","original":"un atti=wa igaimasi=jar=mon=tte juw-ru neesannjooboo","gloss":"RESP あっち=TOP 姉さん女房=COP:NPST=SFP=QUOT 言う-NPST 姉さん女房","japanese":"うん。あっちは「いがいまし（姉さん女房）」だものって言う。姉さん女房。","originalSpaced":"うん あっちわ いがいましやもんって ゆう ねえさんにょおぼお"},{"id":13,"speaker":"NY","original":"ijaija jome-san=jo unun moo iw-a-n=ne sogen atti=wa igaimasi=jar=mon","gloss":"RESP 嫁-TTL=SFP RESP もう 言う-THM-NEG=SFP そう あっち=TOP 姉さん女房=COP:NPST=SFP","japanese":"いやいや（いがいましは）嫁さんだよ。うんうん、もう言わないね、そう。あっちはいがいまし（姉さん女房）だもの。","originalSpaced":"いやいや よめさんよ うんうん もお いわんね そげん あっちわ いがいましやもん"},{"id":14,"speaker":"NY","original":"de igai=tte juw-ru=ne kai=ga ar-ru=to","gloss":"CONJ イガイ=QUOT 言う-NPST=SFP 貝=NOM ある-NPST=FN","japanese":"で、イガイっていうね、貝があるの。","originalSpaced":"で いがいって ゆうね かいが あると"},{"id":15,"speaker":"NY","original":"un zisjo=i nor-tor-ru","gloss":"RESP 辞書=DAT 載る-PERF-NPST","japanese":"うん、辞書に載っている。","originalSpaced":"うん じじょい のっとお"},{"id":16,"speaker":"NY","original":"unun","gloss":"RESP","japanese":"うんうん。","originalSpaced":"うんうん"},{"id":17,"speaker":"NY","original":"hottene XXX-san=ni iw-i-jor-ta=to=tai kogena=huu=te sogen jakamasi-i=batte igai=ni jo-katta=de X","gloss":"CONJ XXX-TTL=DAT 言う-THM-PROG-PST=FN=CRTN こんな=FN=QUOT そう やかましい-NPST=ADVRS 意外=DAT 良い-PST=COP:SEQ X","japanese":"それでね、XXXさんに言っていたんだよ。こんな風って。（姉さん女房は）そうやかましいけれど、意外に良かったでX。（プライバシー保護のためXXX。音声データは削除。）","originalSpaced":"ほっでね XXXさんに いいよったったい こげなふうて そげん やかましかば いがいに よかったで X"},{"id":18,"speaker":"NY","original":"ne nor-tor-roo","gloss":"INTJ 載る-PERF-INFR","japanese":"ね、載っているだろう。","originalSpaced":"ね のっとろ"},{"id":19,"speaker":"NY","original":"sore=ga too=mo ikutu=mo=wa tumar-a-n=to=jo iti-sai=ka ni-sai=gurai ne","gloss":"それ=NOM 十=ADD いくつ=ADD=TOP 詰まる-THN-NEG=FN=SFP 一-歳=DUB ニ-歳=くらい INTJ","japanese":"それが10もいくつも（年上なのは）つまらないんだよ。一歳か二歳くらい。ね。","originalSpaced":"それが とおも いくつもわ つまらんとよ いっさいか にさいぐらい ね"},{"id":20,"speaker":"NY","original":"kin=no warazi=o temo sagas-re=te juw-ru=gurai sono issaitosiue sono neesannjoobo=wa","gloss":"金=GEN 草鞋=ACC ADVRS 探す-IMP=QUOT 言う-NPST=くらい その 一歳年上 FIL 姉さん女房=TOP","japanese":"金の草鞋を、（履いて）でも、探せっていうくらい。その一歳年上の、姉さん女房は。","originalSpaced":"きんの わらじお ても さがせって ゆうぐらい その いっさいと その ねえさんにょおぼおわ"},{"id":21,"speaker":"NY","original":"un soo=tai","gloss":"RESP そう=CRTN","japanese":"うんそうだよ。","originalSpaced":"うん そおたい"},{"id":22,"speaker":"NY","original":"moraw-re=tte","gloss":"貰う-IMP=QUOT","japanese":"（姉さん女房を）もらえって。","originalSpaced":"もらえって"},{"id":23,"speaker":"NY","original":"un","gloss":"RESP","japanese":"うん","originalSpaced":"うん"},{"id":24,"speaker":"NY","original":"un","gloss":"RESP","japanese":"うん","originalSpaced":"うん"},{"id":25,"speaker":"NY","original":"ken too=mo nizjuu=mo=jar na-i=to=jo","gloss":"CONJ 十=ADD 二十=ADD=COP 無い-NPST=FN=SFP","japanese":"だから、（姉さん女房というのは）10も20も（年上）じゃないんだよ。","originalSpaced":"けん とおも にじゅうもや ないとよ"},{"id":26,"speaker":"NY","original":"iti-sai=ka ni-sai","gloss":"一-歳=DUB ニ-歳","japanese":"一歳か二歳（年上なのが姉さん女房）。","originalSpaced":"いっさいか にさい"},{"id":27,"speaker":"NY","original":"sosite sono tjotto erotikku=ni juw-tara iwaimedeta=mo=sa ano XXX-san=wa=ne","gloss":"CONJ FIL ちょっと エロチック=DAT 言う-COND 祝いめでた=ADD=SFP FIL XXX-TTL=TOP=SFP","japanese":"だからその、ちょっとエロチックに言ったらさ、祝いめでたもさ、あの、XXXさんはね。（プライバシー保護のためXXX。音声データは削除。）","originalSpaced":"そって その ちょっと えろちっくに ゆうたら いわいめでたもさ あの XXXさんわね"},{"id":28,"speaker":"NY","original":"teippon ire-mas-roo=te juw-roo=ga iwaimedeta=no ato=ne","gloss":"手一本 入れる-POL-INT=QUOT 言う-INFR=SFP 祝いめでた=GEN 後=SFP","japanese":"手一本入れましょうって、言うだろう。祝いめでたの後ね。","originalSpaced":"ていっぽん いれましょおて ゆおおが いわいめでたの あとね"},{"id":29,"speaker":"NY","original":"de ippon ire-mas-roo ippon sime-mas-roo=to ar-ru=tai=ne","gloss":"CONJ 一本 入れる-POL-INT 一本 閉める-POL-INT=COM ある-NPST=CRTN=SFP","japanese":"で、「一本入れましょう」、「一本締めましょう」とあるんだよね。","originalSpaced":"で いっぽん いれましょお いっぽん しめましょおと あるたいね"},{"id":30,"speaker":"NY","original":"de ire-mas-roo=te iw-a-na ik-a-n=te o-kjaku-san=ga=ne batten hora simar-te ik-roo=tte juw-ru=jar na-i=ne nan=ka","gloss":"CONJ 入れる-POL-INT=QUOT 言う-THM-NEG:COND 行く-THM-NEG=QUOT SFN-客-TTL=NOM=SFP ADVRS DSC 締まる-SEQ 行く-INT=QUOT 言う-NPST=COP 無い-NPST=SFP 何=INDEF","japanese":"で、「入れましょう」って言わないといけないってお客さんがね。だけどほら、「締まっていこう」って言うじゃない、何か。","originalSpaced":"で いれましょおて いわな いかんて おきゃくさんがね ばってん ほら し…しまって いこおって ゆうや ないね なんか"},{"id":31,"speaker":"NY","original":"jaken atasi simar-te juk-roo=mo i-i=to omow-ru=to=jar=kedo","gloss":"CONJ 私 締まる-SEQ 行く-INT=ADD 良い-NPST=QUOT 思う-NPST=FN=COP=ADVRS","japanese":"だから私、「締まっていこう」も良いと思うんだけど","originalSpaced":"やけん あたし しまって ゆこおも いいと おもうっちゃけど"},{"id":32,"speaker":"NY","original":"ano ire-mas-roo=ga hora sjoobaihanzjoo=jara=ni nar-ru=to simar-te ik-roo=mo hora i-i=to omow-ru","gloss":"FIL 入れる-POL-INT=NOM DSC 商売繁盛=EXM=DAT なる-NPST=FN 締まる-SEQ 行く-INT=ADD DSC 良い-NPST=QUOT 思う-NPST","japanese":"あの、「入れましょう」が、ほら、商売繁盛とかになるの。「締まっていこう」も、ほら、良いと思う。","originalSpaced":"あの いれましょおが ほら しょおばいはんじょおやらに なると しまって ゆこおも ほら いいと おもう"},{"id":33,"speaker":"NY","original":"tarane ano iremasjoo=wa otoko=de=ne simemasjoo=wa onna=jo=tte","gloss":"CONJ FIL 「入れましょう」=TOP 男=COP:SEQ=SFP 「締めましょう」=TOP 女=SFP=QUOT","japanese":"そしたらね、あのー、「入れましょう」は男でね、「締めましょう」は女よって。","originalSpaced":"たらね あの いれましょおわ おとこでね しめましょおわ おんなよって"},{"id":34,"speaker":"NY","original":"sogen kik-ta","gloss":"そう 聞く-PST","japanese":"そう聞いた。","originalSpaced":"そげん きいた"},{"id":35,"speaker":"NY","original":"ire-mas-roo=wa otoko=te ippon sime-mas-roo=wa onna=jo=tte","gloss":"入れる-POL-INT=TOP 男=QUOT 一本 閉める-POL-INT=TOP 女=SFP=QUOT","japanese":"「入れましょう」は男って。「一本締めましょう」は女よって。","originalSpaced":"いれましょおわ おとこて いっぽん しめましょおわ おんなよって"},{"id":36,"speaker":"NY","original":"jaken sore=ba kak-roo=te juw-te sogena koto=ba kak-a-n-nok-i=tte juw-ta=to=tai purinto=ni=ne","gloss":"CONJ それ=ACC 書く-INT=QUOT 言う-QUOT そんな FN=ACC 書く-THM-NEG-ANT:PERF-IMP=QUOT 言う-PST=FN=CRTN プリント=DAT=SFP","japanese":"だから、それを書こうって（他の人）が言って、そんなことを書かないでおきって（私が）言ったんだよ。プリントにねえ。","originalSpaced":"やけ それば かこおて ゆうて そげな ことば かかんのきって ゆうたったい ぷりんとにねえ"},{"id":37,"speaker":"NY","original":"waraibanasi=to si-te hanas-ru=kedo=ne un sogen anta purinto=ni kak-a-n-nok-te=tte juw-ru","gloss":"笑い話=QUOT する-SEQ 話す-NPST=ADVRS=SFP RESP そう あなた プリント=DAT 書く-THM-NEG-ANT:PERF-SEQ=QUOT 言う-NPST","japanese":"笑い話として話すけれどねえ。うん。そう、あなた、（そんなことを）プリントに書かないでおいてっていう。","originalSpaced":"わらいばなしと して はなすけどねえ うん そげん あんた ぷりんとに かかんのってって ゆう"},{"id":38,"speaker":"NY","original":"neesannjoobo sogen ippai","gloss":"姉さん女房 そう いっぱい","japanese":"姉さん女房。そういっぱい（博多弁がある）。","originalSpaced":"ねえさんにょおぼ そげん いっぱい"},{"id":39,"speaker":"NY","original":"aa tjattjakutjara un aa tjattjakutjara","gloss":"INTJ 色々 RESP INTJ 色々","japanese":"ああ、「ちゃっちゃくちゃら（色々）」。うん、ああ「ちゃちゃくちゃら（色々）」。","originalSpaced":"ああ ちゃっちゃくちゃら うん ああ ちゃっちゃくちゃら"},{"id":40,"speaker":"NY","original":"sore=to=ne are=ga i-i=jo sozakas-u=ga","gloss":"それ=COM=SFP あれ=NOM 良い-NPST=SFP 壊す-NPST=NOM","japanese":"それとね、あれがいいよ。「そざかす（壊す）」が。","originalSpaced":"それとね あれが いいよ そざかすが"},{"id":41,"speaker":"NY","original":"sozakas-ru=ga i-i=jo","gloss":"壊す-NPST=NOM 良い-NPST=SFP","japanese":"「そざかす（壊す）」がいいよ。","originalSpaced":"そざかすが いいよ"},{"id":42,"speaker":"NY","original":"ano hito=ni=ne aa nan=detja kas-rare-n=jo sozakas-i-te modos-rassjar-ru=ken","gloss":"あの 人=DAT=SFP INTJ 何=INDEF 貸す-POT-NEG=SFP 壊す-THM-SEQ 戻す-HON-NPST=CSL","japanese":"あの人にね、ああ、何でも貸せないよ。壊してお返しになるから。","originalSpaced":"あの ひとにね ああ なんでちゃ かされんよ そざかして もどさっしゃあけん"},{"id":43,"speaker":"NY","original":"kuzus-i-te=toka un kore=ba sozakas-i-te modos-i-tara ik-a-n=jo=tte","gloss":"崩す-THM-SEQ=EXM RESP これ=ACC 壊す-THM-SEQ 戻す-THM-COND 行く-THM-NEG=SFP=QUOT","japanese":"（「そざかす」の意味は）崩してとか。うん、「これを壊して戻したらいけないよ」って。","originalSpaced":"くずしてとか うん これば そざかして もどしたら いかんよって"},{"id":44,"speaker":"NY","original":"sojaken tiisa-i kodomo=ni sore=ba kas-a-n-nok-i ano hito sozakas-ru=ken=tte juw-ru","gloss":"CONJ 小さい-ADN 子供=DAT それ=ACC 貸す-THM-NEG-ANT:PERF-IMP あの 人 壊す-NPST=CSL=QUOT 言う-NPST","japanese":"だから「小さい子供にそれを貸さないでおき。あの人壊すから」って言う 。","originalSpaced":"そいけん ちいさい こどもに それば かさんのき あの ひと そざかすけんって ゆう"},{"id":45,"speaker":"NY","original":"kowas-ru=tte juw-ru","gloss":"壊す-NPST=QUOT 言う-NPST","japanese":"（「そざかす」は）壊すって（いう意味）。","originalSpaced":"こわすって ゆう"},{"id":46,"speaker":"NY","original":"un sozakas-ru=mo i-i=to omow-ru","gloss":"RESP 壊す-NPST=ADD 良い-NPST=QUOT 思う-NPST","japanese":"うん。「そざかす（壊す）」も良いと思う。","originalSpaced":"うん そざかすも いいと おもう"},{"id":47,"speaker":"NY","original":"sozakas-ru","gloss":"壊す-NPST","japanese":"壊す","originalSpaced":"そざかす"},{"id":48,"speaker":"NY","original":"kuzus-ru=toka anoo jogos-ru=toka un sore=to hora madow-ru=mo=tai=ne bensjoo su-ru=te juw-ru=to=ga","gloss":"崩す-NPST=EXM FIL 汚す-NPST=EXM RESP それ=COM DSC 弁償する-NPST=ADD=CRTN=SFP 弁償 する-NPST=QUOT 言う-NPST=FN=NOM","japanese":"（「そざかす」の意味は）崩すとかあのー、汚すとか。うん。それとほら「まどう（弁償する）」も（博多弁）だよね。弁償するっていうのが。","originalSpaced":"くずすとか あのお よごすとか うん それと ほら まどうもたいね べんしょお するて ゆうとが"},{"id":49,"speaker":"NY","original":"anone ano uti=n=gata=no mae=jara=de boorunage=jara si-tara kjuusu ok-tor-roo=ga ne","gloss":"INTJ FIL うち=GEN=FN=GEN 前=EXM=INST ボール投げ=EXM する-COND 急須 置く-PERF-INFR=SFP INTJ","japanese":"あのね、あのーうちの家の前とかで、ボール投げとかしたら、急須置いているだろう。ね。","originalSpaced":"あのね あの うちんがたの まえやらで ぼおるなげやら したら きゅうす おいとろおが ね"},{"id":50,"speaker":"NY","original":"hokke aata-tati sogena koto si-jor-tara madow-sase-ru=ken=ne=tte juw-ru=to=tai=ne","gloss":"CONJ あなた-PL そんな FN する-PROG-COND 弁償する-CAUS-NPST=CSL=SFP=QUOT 言う-NPST=FN=CRTN=SFP","japanese":"だから、「あなたたちそんなことしていたらまどわせる（弁償させる）からね」って言うんだよね。","originalSpaced":"ほっけ ああたたち そげな こと しよったら まどわせるけんねって ゆうったいね"},{"id":51,"speaker":"NY","original":"bensjoo s-sase-ru=tte juw-ru imi","gloss":"弁償 する-CAUS-NPST=QUOT 言う-NPST 意味","japanese":"（「まどわせる」は）「弁償させる」っていう意味。","originalSpaced":"べんしょお させるって ゆう いみ"},{"id":52,"speaker":"NY","original":"sojaken=ne anoo sunakku=jara haitatu ik-te mot-te ik-te sum-i-mas-e-n anoo asuko soto ok-tor-i-mas-ru=kedo ano na-u nar-tor-tara madow-i-mas-ru=kara=tte juw-ru=to=tai","gloss":"CONJ=SFP FIL スナック=EXM 配達 行く-SEQ 持つ-SEQ 行く-SEQ 済む-THM-POL-THM-NEG FIL あそこ 外 置く-PERF-THM-POL-NPST=ADVRS FIL 無い-ADV なる-PERF-COND 弁償する-THM-POL-NPST=ABL=QUOT 言う-NPST=FN=CRTN","japanese":"だからね、あのー、スナックとか配達に行って、持って行って、「すみませんあのー、あそこ外に置いていますけど無くなっていたら弁償しますから」って言うんだよ。","originalSpaced":"そやけんね あのお すなっくやら はいたつ いって もって いって すいません あのお あすこ そと おいとりますけど あのお のお なっとったら まどいますからって ゆうったい"},{"id":53,"speaker":"NY","original":"un madow-sase-ru=ken=ne=tte juw-ru=tai anoo kjuusu=jara tukaw-i+mawas-i-te kodomo=ga tukaw-i+mawas-i-te ware madow-sase-ru=ken=ne=tte juw-ru","gloss":"RESP 弁償する-CAUS-NPST=CSL=SFP=QUOT 言う-NPST=CRTN FIL 急須=EXM 使う-THM+回す-THM-SEQ 子供=NOM 使う-THM+回す-THM-SEQ 割れる 弁償する-CAUS-NPST=CSL=SFP=QUOT 言う-NPST","japanese":"うん、「弁償させるからね」って言うんだよ。急須とか使い回して、子供が使い回して（割れたら）。「弁償させるからね」って言う。","originalSpaced":"うん まどわせるけんねえって ゆうたい あのお きゅうすやら つかいまわして こどもが つかいまわして われ まどわせるけんねって ゆう"},{"id":54,"speaker":"NY","original":"bensjoo s-sase-ru=te","gloss":"弁償 する-CAUS-NPST=QUOT","japanese":"「弁償させる」って（いう意味）。","originalSpaced":"べんしょお させるて"},{"id":55,"speaker":"NY","original":"totukemuna-ka","gloss":"とんでもない-NPST","japanese":"とんでもない。","originalSpaced":"とつけむなか"},{"id":56,"speaker":"NY","original":"totukemuna-ka=te juw-ru=ne","gloss":"とんでもない-NPST=QUOT 言う-NPST=SFP","japanese":"「とつけむなか（とんでもない）」って言うね。","originalSpaced":"とつけむなかて ゆうねえ"},{"id":57,"speaker":"NY","original":"totukemuna-ka koto iw-rassjar-ru=tte","gloss":"とんでもない-ADN FN 言う-HON-NPST=QUOT","japanese":"「とんでもないこと言いなさる」って。","originalSpaced":"とつけむ…とつけむなか こと いわっしゃあって"},{"id":58,"speaker":"NY","original":"tohoomona-i soosoo totukemuna-ka koto iw-rassjar-ru=tte juw-ru=ne tondemona-i koto","gloss":"途方もない-NPST そうそう とんでもない-ADN FN 言う-HON-NPST=QUOT 言う-NPST=SFP とんでもない-ADN FN","japanese":"途方もない。そうそう。「とんでもないことおっしゃる」って言うね。とんでもないこと。","originalSpaced":"とほうもない そおそお とつけむなか こと いわっしゃあって ゆうね とんでもない こと"},{"id":59,"speaker":"NY","original":"totukemunaka ha totukemuna-ka","gloss":"「とんでもない」 RESP とんでもない-NPST","japanese":"は。とんでもない。","originalSpaced":"とつ… は とつけむなか"},{"id":60,"speaker":"NY","original":"totukemuna-ka","gloss":"とんでもない-NPST","japanese":"とんでもない。","originalSpaced":"とつけむなか"},{"id":61,"speaker":"NY","original":"tara atasi=mo o-tja=no keeko ik-i-jor-te ano akuseut-ru=ne=tte juw-ru=to=tai ano hora naganaga=to su-ru=to otemae kono otemae akuseut-ru=ne=tte hora ne","gloss":"CONJ 私=ADD SFN-茶=GEN 稽古 行く-THM-PROG-SEQ FIL 飽き飽きする-NPST=SFP=QUOT 言う-NPST=FN=CRTN FIL DSC 長々=QUOT する-NPST=FN お手前 この お手前 飽き飽きする-NPST=SFP=QUOT DSC INTJ","japanese":"そしたら、私もお茶の稽古に行っていて、あの、「あくせうつ（飽き飽きする）」って言うんだよ。あのほら、長々とするのを。「お手前、このお手前飽き飽きするね」ってほら。ね。","originalSpaced":"た あたしも おちゃの けえこ いきよって あの あくせうつねって ゆうったい あの ほら ながながと すると おてまえ この おてまえ あくせうつねって ほら ね"},{"id":62,"speaker":"NY","original":"akiaki su-ru=tte juw-ru imi=tai=ne","gloss":"飽き飽き する-NPST=QUOT 言う-NPST 意味=CRTN=SFP","japanese":"「飽き飽きする」っていう意味だよ","originalSpaced":"あきあき するって ゆう いみたいね"},{"id":63,"speaker":"NY","original":"akuseut-ru","gloss":"飽き飽きする-NPST","japanese":"飽き飽きする。","originalSpaced":"あくせ…あくせうつ"},{"id":64,"speaker":"NY","original":"akiaki su-ru=tte juw-ru","gloss":"飽き飽き する-NPST=QUOT 言う-NPST","japanese":"「飽き飽きする」っていう（意味だよ）。","originalSpaced":"あきあき するって ゆう"},{"id":65,"speaker":"NY","original":"ano hito=no hanasi=a naga-i=ken akuseut-ru=ne","gloss":"あの 人=GEN 話=TOP 長い-NPST=CSL 飽き飽きする-NPST=SFP","japanese":"あの人の話は長いから飽き飽きするね。","originalSpaced":"あの ひとの はなしあ ながいけん あくせうつね"},{"id":66,"speaker":"NY","original":"aa aa sjagam-tor-ru=to","gloss":"INTJ INTJ しゃがむ-PERF-NPST=FN","japanese":"ああ、ああ、（「つくぼおどる」の意味）しゃがんでいるの。","originalSpaced":"ああ ああ しゃがんどおと"},{"id":67,"speaker":"NY","original":"sojaken ano karonouronja=ga hora wakurooroo=ga tukuboodor-ru=tte juw-ru kak-tjar-ru=jo","gloss":"CONJ FIL かろのうろん屋=NOM DSC 蛙=NOM しゃがむ-NPST=QUOT 言う-NPST 書く-PERF-NPST=SFP","japanese":"だからあのー、かろのうろん屋がほら、「わくろうろう（蛙）がつくぼおどる（しゃがむ）」っていう。書いてあるよ。","originalSpaced":"そやけん あの かろのうろんやが ほら わくろおろおが つくぼおどるって ゆう かいちゃあよ"},{"id":68,"speaker":"NY","original":"wakurooroo=wa anoo kaeru=tai=ne","gloss":"「わくろうろう」=TOP FIL 蛙=CRTN=SFP","japanese":"「わくろうろう」はあのー、蛙だよね。","originalSpaced":"わくろおろおわ あのお かえるたいね"},{"id":69,"speaker":"NY","original":"ga tukuboodor-ru=tte suwar-tor-ru=tte juw-ru imi ano karonouronja","gloss":"NOM 座る-NPST=QUOT 座る-PERF-NPST=QUOT 言う-NPST 意味 FIL かろのうろん屋","japanese":"（蛙）が「つくぼおどる」って。「座っている」っていう意味。あのー、かろのうろん屋。","originalSpaced":"が つくぼおどるって すわっとおって ゆう いみ あの かろのうろんや"},{"id":70,"speaker":"NY","original":"karonouron=jar=ken karo=ga moo hakataben=jar na-i=ne","gloss":"かろのうろん=COP:NPST=CSL 「かろ」=NOM もう 博多弁=COP 無い-NPST=SFP","japanese":"かろのうろんだから、「かろ（角）」がもう博多弁じゃない。","originalSpaced":"かろのうろんやけん かろが もお はかたべんや ないね"},{"id":71,"speaker":"NY","original":"no sojaken wakurooroo","gloss":"GEN CONJ 蛙","japanese":"（かろのうろん屋の前）の、だから「わくろうろう（蛙）」。","originalSpaced":"の そいけん わくろおろお"},{"id":72,"speaker":"NY","original":"tanuki=mo=jar=mon=ne","gloss":"狸=ADD=COP:NPST=SFP=SFP","japanese":"（飾ってあるのは）たぬきもだものね。","originalSpaced":"たぬきもやもんね"},{"id":73,"speaker":"NY","original":"tanuki=mo kazar-tjar-roo=ga mise ta=no mise=o nuk-te ir-ru=tte juw-ru imi","gloss":"狸=ADD 飾る-PERG-INFR=SFP 店 他=GEN 店=ACC 抜く-SEQ いる-NPST=QUOT 言う-NPST 意味","japanese":"狸も飾っているだろう、店（が）。（狸を飾っているのは）「他の店を抜いている」っていう意味。","originalSpaced":"たぬきも かざっちゃろおが みせ たの みせお ぬいて いるって ゆう いみ"},{"id":74,"speaker":"NY","original":"wakar-a-njatta=to maa benkjoo=wa su-ru=kedo=sa zjoosiki=ga na-i=mon sojaken uti=n=gata=no otoosan=ga suk-i-nsjar-e-n=to=tai benkjoo=no deki-ru hito","gloss":"分かる-THM-NEG:PST=FN INTJ 勉強=TOP する-NPST=ADVRS=SFP 常識=NOM 無い-NPST=SFP CONJ うち=GEN=FN=GEN お父さん=NOM 好き-THM-HOM-THM-NEG=FN=CRTN 勉強=NOM できる-NPST 人","japanese":"分からなかったの、まあ。（頭が良い人は）勉強はするけどさあ、常識が無いもの。だから、うちのところのお父さんがお好きじゃないんだよ。勉強ができる人。","originalSpaced":"わからんやったと まあ べんきょおわ するけどさ じょおしきが ないもん そやけん うちんがたの おとおさんが すきんしゃれんったい べんきょおの できる ひと"},{"id":75,"speaker":"NY","original":"soo=jo ta=no mise=o nuk-ru=jo","gloss":"そう=SFP 他=GEN 店=ACC 抜く-NPST=SFP","japanese":"そうよ。（狸を飾る意味は）「他の店を抜く」よ。","originalSpaced":"そおよ たの みせお ぬくよ"},{"id":76,"speaker":"NY","original":"ijaija ta=no mise=jori nukinde-ru=te juw-ru imi=jar-roo=mon tanuki=jar=ken","gloss":"RESP 他=GEN 店=CMP 抜きんでる-NPST=QUOT 言う-NPST 意味=COP-INFR=SFP 他抜き=COP:NPST=CSL","japanese":"いやいや、「他の店より抜きんでる」っていう意味だろう。タヌキだから。","originalSpaced":"いやいやあ たの みせより ぬきんでるて ゆう いみやろおもん たぬきやけん"},{"id":77,"speaker":"NY","original":"un bakas-roo=to omow-te kazar-te=wa na-i=jo=ne","gloss":"RESP 化かす-INT=QUOT 思う-SEQ 飾る-SEQ=TOP 無い-NPST=SFP=SFP","japanese":"うん。化かそうと思って飾ってはないよね。","originalSpaced":"うん ばかそおと おもって かざっちゃ ないよね"},{"id":78,"speaker":"NY","original":"ibar-ru=tai ano moo juw-ta=mon=ne sakki ano hito kookar-rassjar-ru=tte juw-ru","gloss":"威張る-NPST=CRTN FIL もう 言う-PST=SFP=SFP さっき あの 人 威張る-HON-NPST=QUOT 言う-NPST","japanese":"（「こうかる」は）「威張る」だよ。あのー、もう言ったよねさっき。「あの人こうからっしゃあ（威張りなさる）」って言う。","originalSpaced":"いばるたい あの もお ゆうたもんね さっき あの ひと こおからっしゃあって ゆう"},{"id":79,"speaker":"NY","original":"ibar-rassjar-ru=tte","gloss":"威張る-HON-NPST=QUOT","japanese":"「威張りなさる」って。","originalSpaced":"いばらっしゃあって"},{"id":80,"speaker":"NY","original":"un iroiro ar-ru=to kak-tok-ru=tai mata","gloss":"RESP 色々 ある-NPST=FN 書く-ANT:PERF-NPST=CRTN また","japanese":"うん色々あるの。書いておくよ。また。","originalSpaced":"うん いろいろ あると かいとくたい また"},{"id":81,"speaker":"NY","original":"uso ano hito suragoto=bakkari iw-ras-ru","gloss":"嘘 あの 人 嘘=RPT 言う-HON-NPST","japanese":"嘘。「あの人すらごと（嘘）ばっかりおっしゃる」っていう。","originalSpaced":"うそ あの ひと すらごとばっかり いわす"},{"id":82,"speaker":"NY","original":"suragoto sojakenne koo sore iw-a-n-te=ne","gloss":"嘘 CONJ こう それ 言う-THN-NEG-SEQ=SFP","japanese":"嘘（という意味）。だからね、こう、それ（「すらごと」と口に出して）言わないでね","originalSpaced":"すらごと そやけんね こお それ いわんでね"},{"id":83,"speaker":"NY","original":"kogen si-jor-ta=jo hora suragoto","gloss":"こう する-PERG-PST=SFP DSC 嘘","japanese":"こうしていたよ。（ジェスチャーをして）ほら、嘘。","originalSpaced":"こげん しよったよ ほら すらごと"},{"id":84,"speaker":"NY","original":"juw-a-n-te simes-i-jor-ta","gloss":"言う-THM-NEG-SEQ 示す-THM-PROG-PST","japanese":"（すらごとというのを）言わないで示していた。","originalSpaced":"ゆわんで しめしよった"},{"id":85,"speaker":"NY","original":"sura goto tai","gloss":"すら ごと CRTN","japanese":"（頬を）すら、（顎を）ごと、だよ。","originalSpaced":"すら ごと たい"},{"id":86,"speaker":"NY","original":"uso=tte juw-ru imi=tai ima=n=to=wa kore=jo=tte","gloss":"嘘=QUOT 言う-NPST 意味=CRTN 今=GEN=FN=TOP これ=SFP=QUOT","japanese":"嘘っていう意味だよ。今のはこれよって（言ってジェスチャーをする）。","originalSpaced":"うそって ゆう いみたい いまんとわ これよって"},{"id":87,"speaker":"NY","original":"ununun soo=jo si-tjar-ru","gloss":"RESP そう=SFP する-BEN-NPST","japanese":"うん、うんうんそうよ。（ジェスチャーを）してやる。","originalSpaced":"うんうんうん そおよ しちゃる"},{"id":88,"speaker":"NY","original":"ununun XXX-san=ga kak-tjar-ru","gloss":"RESP XXX-TTL=NOM 書く-HON:PERF-NPST","japanese":"うんうんうん、XXXさんが書かれている。（プライバシー保護のためXXX。音声データは削除。）","originalSpaced":"うんうんうん XXXさんが かいちゃあ"},{"id":89,"speaker":"NY","original":"ima=n=to=wa kore=jo=tte juw-ru","gloss":"今=GEN=FN=TOP これ=SFP=QUOT 言う-NPST","japanese":"今のは、これよ（嘘だよ）って言う。","originalSpaced":"いまんとわ これよって ゆう"},{"id":90,"speaker":"NY","original":"sogen=tai","gloss":"そう=CRTN","japanese":"そんなふうだよ。","originalSpaced":"そげんたい"}],
+                        audioUrls: ["https://zenodo.org/api/records/18167852/files/335_NY_そげんたい_そら_もお_いっぱい_あるったい_はかたべんわね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/336_NY_け_いちばん_あれが_しろしかて_ゆうとが_いつも_よこずな.wav/content?download=1","https://zenodo.org/api/records/18167852/files/337_NY_うっとおしいとか_そやけん_あめが_ふっても_しろしか_なん.wav/content?download=1","https://zenodo.org/api/records/18167852/files/338_NY_ひとに_たいして_あの_ひとわ_あうと_しろしかって_ゆうね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/339_NY_あめふりでも_せんたくもんの_かわかんけん_しろしかって_ほ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/340_NY_うっとおしいって_ゆう_いみたい.wav/content?download=1","https://zenodo.org/api/records/18167852/files/341_NY_ううん_いらいらと_ちがうね_うっとおしいやね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/342_NY_きが_ね_なんか_はればれ_せんって_ゆう_いみよね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/343_NY_しろしい_ひとも_うん_あの_ひと_しろしかねって_ゆう_ほ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/344_NY_しろしか_と_なんが_のっとおかいな_ああ_それと_としうえ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/345_NY_ほいて_いがいって_ゆう_かいが_あると_じしょ_ひいたら.wav/content?download=1","https://zenodo.org/api/records/18167852/files/346_NY_うん_あっちわ_いがいましやもんって_ゆう_ねえさんにょおぼ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/347_NY_いやいや_よめさんよ_うんうん_もお_いわんね_そげん_あっ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/348_NY_で_いがいって_ゆうね_かいが_あると.wav/content?download=1","https://zenodo.org/api/records/18167852/files/349_NY_うん_じじょい_のっとお.wav/content?download=1","https://zenodo.org/api/records/18167852/files/350_NY_うんうん.wav/content?download=1","https://zenodo.org/api/records/18167852/files/351_NY_dummy.wav/content?download=1","https://zenodo.org/api/records/18167852/files/352_NY_ね_のっとろ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/353_NY_それが_とおも_いくつもわ_つまらんとよ_いっさいか_にさい.wav/content?download=1","https://zenodo.org/api/records/18167852/files/354_NY_きんの_わらじお_ても_さがせって_ゆうぐらい_その_いっさ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/355_NY_うん_そおたい.wav/content?download=1","https://zenodo.org/api/records/18167852/files/356_NY_もらえって.wav/content?download=1","https://zenodo.org/api/records/18167852/files/357_NY_うん.wav/content?download=1","https://zenodo.org/api/records/18167852/files/358_NY_うん.wav/content?download=1","https://zenodo.org/api/records/18167852/files/359_NY_けん_とおも_にじゅうもや_ないとよ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/360_NY_いっさいか_にさい.wav/content?download=1","https://zenodo.org/api/records/18167852/files/361_NY_dummy.wav/content?download=1","https://zenodo.org/api/records/18167852/files/362_NY_ていっぽん_いれましょおて_ゆおおが_いわいめでたの_あとね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/363_NY_で_いっぽん_いれましょお_いっぽん_しめましょおと_あるた.wav/content?download=1","https://zenodo.org/api/records/18167852/files/364_NY_で_いれましょおて_いわな_いかんて_おきゃくさんがね_ばっ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/365_NY_やけん_あたし_しまって_ゆこおも_いいと_おもうっちゃけど.wav/content?download=1","https://zenodo.org/api/records/18167852/files/366_NY_あの_いれましょおが_ほら_しょおばいはんじょおやらに_なる.wav/content?download=1","https://zenodo.org/api/records/18167852/files/367_NY_たらね_あの_いれましょおわ_おとこでね_しめましょおわ_お.wav/content?download=1","https://zenodo.org/api/records/18167852/files/368_NY_そげん_きいた.wav/content?download=1","https://zenodo.org/api/records/18167852/files/369_NY_いれましょおわ_おとこて_いっぽん_しめましょおわ_おんなよ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/370_NY_やけ_それば_かこおて_ゆうて_そげな_ことば_かかんのきっ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/371_NY_わらいばなしと_して_はなすけどねえ_うん_そげん_あんた.wav/content?download=1","https://zenodo.org/api/records/18167852/files/372_NY_ねえさんにょおぼ_そげん_いっぱい.wav/content?download=1","https://zenodo.org/api/records/18167852/files/373_NY_ああ_ちゃっちゃくちゃら_うん_ああ_ちゃっちゃくちゃら.wav/content?download=1","https://zenodo.org/api/records/18167852/files/374_NY_それとね_あれが_いいよ_そざかすが.wav/content?download=1","https://zenodo.org/api/records/18167852/files/375_NY_そざかすが_いいよ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/376_NY_あの_ひとにね_ああ_なんでちゃ_かされんよ_そざかして_も.wav/content?download=1","https://zenodo.org/api/records/18167852/files/377_NY_くずしてとか_うん_これば_そざかして_もどしたら_いかんよ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/378_NY_そいけん_ちいさい_こどもに_それば_かさんのき_あの_ひと.wav/content?download=1","https://zenodo.org/api/records/18167852/files/379_NY_こわすって_ゆう.wav/content?download=1","https://zenodo.org/api/records/18167852/files/380_NY_うん_そざかすも_いいと_おもう.wav/content?download=1","https://zenodo.org/api/records/18167852/files/381_NY_そざかす.wav/content?download=1","https://zenodo.org/api/records/18167852/files/382_NY_くずすとか_あのお_よごすとか_うん_それと_ほら_まどうも.wav/content?download=1","https://zenodo.org/api/records/18167852/files/383_NY_あのね_あの_うちんがたの_まえやらで_ぼおるなげやら_した.wav/content?download=1","https://zenodo.org/api/records/18167852/files/384_NY_ほっけ_ああたたち_そげな_こと_しよったら_まどわせるけん.wav/content?download=1","https://zenodo.org/api/records/18167852/files/385_NY_べんしょお_させるって_ゆう_いみ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/386_NY_そやけんね_あのお_すなっくやら_はいたつ_いって_もって.wav/content?download=1","https://zenodo.org/api/records/18167852/files/387_NY_うん_まどわせるけんねえって_ゆうたい_あのお_きゅうすやら.wav/content?download=1","https://zenodo.org/api/records/18167852/files/388_NY_べんしょお_させるて.wav/content?download=1","https://zenodo.org/api/records/18167852/files/389_NY_とつけむなか.wav/content?download=1","https://zenodo.org/api/records/18167852/files/390_NY_とつけむなかて_ゆうねえ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/391_NY_とつけむとつけむなか_こと_いわっしゃあって.wav/content?download=1","https://zenodo.org/api/records/18167852/files/392_NY_とほうもない_そおそお_とつけむなか_こと_いわっしゃあって.wav/content?download=1","https://zenodo.org/api/records/18167852/files/393_NY_とつ_は_とつけむなか.wav/content?download=1","https://zenodo.org/api/records/18167852/files/394_NY_とつけむなか.wav/content?download=1","https://zenodo.org/api/records/18167852/files/395_NY_た_あたしも_おちゃの_けえこ_いきよって_あの_あくせうつ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/396_NY_あきあき_するって_ゆう_いみたいね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/397_NY_あくせあくせうつ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/398_NY_あきあき_するって_ゆう.wav/content?download=1","https://zenodo.org/api/records/18167852/files/399_NY_あの_ひとの_はなしあ_ながいけん_あくせうつね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/400_NY_ああ_ああ_しゃがんどおと.wav/content?download=1","https://zenodo.org/api/records/18167852/files/401_NY_そやけん_あの_かろのうろんやが_ほら_わくろおろおが_つく.wav/content?download=1","https://zenodo.org/api/records/18167852/files/402_NY_わくろおろおわ_あのお_かえるたいね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/403_NY_が_つくぼおどるって_すわっとおって_ゆう_いみ_あの_かろ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/404_NY_かろのうろんやけん_かろが_もお_はかたべんや_ないね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/405_NY_の_そいけん_わくろおろお.wav/content?download=1","https://zenodo.org/api/records/18167852/files/406_NY_たぬきもやもんね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/407_NY_たぬきも_かざっちゃろおが_みせ_たの_みせお_ぬいて_いる.wav/content?download=1","https://zenodo.org/api/records/18167852/files/408_NY_わからんやったと_まあ_べんきょおわ_するけどさ_じょおしき.wav/content?download=1","https://zenodo.org/api/records/18167852/files/409_NY_そおよ_たの_みせお_ぬくよ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/410_NY_いやいやあ_たの_みせより_ぬきんでるて_ゆう_いみやろおも.wav/content?download=1","https://zenodo.org/api/records/18167852/files/411_NY_うん_ばかそおと_おもって_かざっちゃ_ないよね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/412_NY_いばるたい_あの_もお_ゆうたもんね_さっき_あの_ひと_こ.wav/content?download=1","https://zenodo.org/api/records/18167852/files/413_NY_いばらっしゃあって.wav/content?download=1","https://zenodo.org/api/records/18167852/files/414_NY_うん_いろいろ_あると_かいとくたい_また.wav/content?download=1","https://zenodo.org/api/records/18167852/files/415_NY_うそ_あの_ひと_すらごとばっかり_いわす.wav/content?download=1","https://zenodo.org/api/records/18167852/files/416_NY_すらごと_そやけんね_こお_それ_いわんでね.wav/content?download=1","https://zenodo.org/api/records/18167852/files/417_NY_こげん_しよったよ_ほら_すらごと.wav/content?download=1","https://zenodo.org/api/records/18167852/files/418_NY_ゆわんで_しめしよった.wav/content?download=1","https://zenodo.org/api/records/18167852/files/419_NY_すら_ごと_たい.wav/content?download=1","https://zenodo.org/api/records/18167852/files/420_NY_うそって_ゆう_いみたい_いまんとわ_これよって.wav/content?download=1","https://zenodo.org/api/records/18167852/files/421_NY_うんうんうん_そおよ_しちゃる.wav/content?download=1","https://zenodo.org/api/records/18167852/files/422_NY_dummy.wav/content?download=1","https://zenodo.org/api/records/18167852/files/423_NY_いまんとわ_これよって_ゆう.wav/content?download=1","https://zenodo.org/api/records/18167852/files/424_NY_そげんたい.wav/content?download=1"],
+                        fullAudioUrl: "",
+                        titleSize: 2.5,
+                        subtitleSize: 25,
+                        headerImage: ""
+                    };
+                </script><script>
+        // PDFjs workerの設定
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        
+        // グローバル変数
+        let examples = [];
+        let audioUrls = [];
+        let fullAudioUrl = '';
+        let currentlyPlaying = null;
+        let useCorsProxy = true; // CORSプロキシを使用するかどうか
+        let currentTitleSize = 5; // 現在のタイトルフォントサイズ（rem）
+        let currentSubtitleSize = 16; // 現在のサブタイトルフォントサイズ（px）
+        let headerImageData = ''; // 背景画像のBase64データ
+        
+        // 画像圧縮設定
+        const compressionSettings = {
+            none: { maxWidth: Infinity, quality: 1.0 },
+            low: { maxWidth: 2000, quality: 0.9 },
+            medium: { maxWidth: 1200, quality: 0.8 },
+            high: { maxWidth: 800, quality: 0.6 }
+        };
+        
+        // 画像を圧縮する関数
+        function compressImage(file, callback) {
+            const compressionLevel = document.getElementById('imageCompression')?.value || 'medium';
+            const settings = compressionSettings[compressionLevel];
+            
+            // 圧縮なしの場合はそのまま読み込む
+            if (compressionLevel === 'none') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const originalSize = file.size;
+                    updateCompressionInfo(originalSize, originalSize);
+                    callback(e.target.result);
+                };
+                reader.readAsDataURL(file);
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // 最大幅を超える場合はリサイズ
+                    if (width > settings.maxWidth) {
+                        height = Math.round(height * settings.maxWidth / width);
+                        width = settings.maxWidth;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // JPEG形式で圧縮（PNG透過が必要な場合は考慮）
+                    const mimeType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+                    const quality = file.type === 'image/png' ? undefined : settings.quality;
+                    const compressedDataUrl = canvas.toDataURL(mimeType, quality);
+                    
+                    // 圧縮情報を表示
+                    const originalSize = file.size;
+                    const compressedSize = Math.round(compressedDataUrl.length * 0.75); // Base64→バイト概算
+                    updateCompressionInfo(originalSize, compressedSize);
+                    
+                    callback(compressedDataUrl);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // 圧縮情報を表示
+        function updateCompressionInfo(originalSize, compressedSize) {
+            const infoEl = document.getElementById('compressionInfo');
+            if (infoEl) {
+                const originalKB = (originalSize / 1024).toFixed(1);
+                const compressedKB = (compressedSize / 1024).toFixed(1);
+                const ratio = ((1 - compressedSize / originalSize) * 100).toFixed(0);
+                
+                if (originalSize === compressedSize) {
+                    infoEl.textContent = `画像サイズ: ${originalKB} KB（圧縮なし）`;
+                } else {
+                    infoEl.textContent = `元: ${originalKB} KB → 圧縮後: ${compressedKB} KB（${ratio}%削減）`;
+                    infoEl.style.color = compressedSize < 500 * 1024 ? '#28a745' : '#dc3545';
+                }
+            }
+        }
+        
+        // タイトルフォントサイズを設定
+        function setTitleSize(size) {
+            size = parseFloat(size);
+            if (size < 1) size = 1;
+            if (size > 8) size = 8;
+            
+            currentTitleSize = size;
+            const pageTitle = document.getElementById('pageTitle');
+            const slider = document.getElementById('titleSizeSlider');
+            const display = document.getElementById('titleSizeDisplay');
+            
+            if (pageTitle) {
+                pageTitle.style.fontSize = size + 'rem';
+            }
+            if (slider) {
+                slider.value = size;
+            }
+            if (display) {
+                display.textContent = size + 'rem';
+            }
+        }
+        
+        // タイトルフォントサイズを増減
+        function adjustTitleSize(delta) {
+            const newSize = currentTitleSize + delta;
+            setTitleSize(newSize);
+        }
+        
+        // サブタイトルフォントサイズを設定
+        function setSubtitleSize(size) {
+            size = parseInt(size);
+            if (size < 10) size = 10;
+            if (size > 32) size = 32;
+            
+            currentSubtitleSize = size;
+            const pageSubtitle = document.getElementById('pageSubtitle');
+            const slider = document.getElementById('subtitleSizeSlider');
+            const display = document.getElementById('subtitleSizeDisplay');
+            
+            if (pageSubtitle) {
+                pageSubtitle.style.fontSize = size + 'px';
+            }
+            if (slider) {
+                slider.value = size;
+            }
+            if (display) {
+                display.textContent = size + 'px';
+            }
+        }
+        
+        // サブタイトルフォントサイズを増減
+        function adjustSubtitleSize(delta) {
+            const newSize = currentSubtitleSize + delta;
+            setSubtitleSize(newSize);
+        }
+        
+        // 背景画像を設定
+        function setHeaderImage(base64Data) {
+            const headerSection = document.querySelector('.header-section');
+            if (!headerSection) return;
+            
+            if (base64Data) {
+                headerImageData = base64Data;
+                headerSection.style.backgroundImage = `url(${base64Data})`;
+                headerSection.classList.add('has-bg-image');
+            } else {
+                headerImageData = '';
+                headerSection.style.backgroundImage = '';
+                headerSection.classList.remove('has-bg-image');
+            }
+        }
+        
+        // 背景画像を変更（コンテンツセクション用）
+        function changeHeaderImage(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                compressImage(file, function(compressedDataUrl) {
+                    setHeaderImage(compressedDataUrl);
+                });
+            }
+        }
+        
+        // 背景画像を削除
+        function removeHeaderImage() {
+            setHeaderImage('');
+            // 入力フィールドもクリア
+            const input = document.getElementById('headerImageChange');
+            if (input) input.value = '';
+            const uploadInput = document.getElementById('headerImageInput');
+            if (uploadInput) uploadInput.value = '';
+            const preview = document.getElementById('headerImagePreview');
+            if (preview) preview.innerHTML = '';
+        }
+        
+        // アップロードセクションでの画像プレビュー設定
+        function setupHeaderImageUpload() {
+            const input = document.getElementById('headerImageInput');
+            const preview = document.getElementById('headerImagePreview');
+            
+            if (input) {
+                input.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const file = this.files[0];
+                        compressImage(file, function(compressedDataUrl) {
+                            headerImageData = compressedDataUrl;
+                            if (preview) {
+                                preview.innerHTML = `<img src="${compressedDataUrl}" alt="プレビュー">`;
+                            }
+                        });
+                    }
+                });
+            }
+        }
+        
+        // ZenodoレコードURLから音声ファイルURLを取得
+        async function fetchZenodoFiles(recordUrl) {
+            // ZenodoのレコードURLからレコードIDを抽出
+            const match = recordUrl.match(/zenodo\.org\/records\/(\d+)/);
+            if (!match) {
+                throw new Error('無効なZenodo URLです。例: https://zenodo.org/records/12345678');
+            }
+            
+            const recordId = match[1];
+            const apiUrl = `https://zenodo.org/api/records/${recordId}`;
+            
+            // CORSプロキシを試行（複数のプロキシを順番に試す）
+            const proxyUrls = [
+                apiUrl, // まず直接アクセスを試みる
+                `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`,
+                `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`,
+                `https://thingproxy.freeboard.io/fetch/${apiUrl}`,
+                `https://cors.bridged.cc/${apiUrl}`
+            ];
+            
+            let data = null;
+            let lastError = null;
+            
+            for (const url of proxyUrls) {
+                try {
+                    console.log('Trying:', url);
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        let jsonData = await response.json();
+                        // alloriginsはcontentsフィールドにデータをラップする
+                        if (jsonData.contents) {
+                            jsonData = JSON.parse(jsonData.contents);
+                        }
+                        data = jsonData;
+                        console.log('Success with:', url);
+                        break;
+                    }
+                } catch (e) {
+                    lastError = e;
+                    console.log(`Proxy failed: ${url}`, e.message);
+                }
+            }
+            
+            if (!data) {
+                throw new Error('Zenodo APIへの接続に失敗しました。CORSプロキシがすべて利用不可です。');
+            }
+            
+            if (!data.files || data.files.length === 0) {
+                throw new Error('このレコードにはファイルがありません');
+            }
+            
+            // 音声ファイルをフィルタリング
+            const audioExtensions = ['.wav', '.mp3', '.ogg', '.flac', '.m4a'];
+            const audioFiles = data.files.filter(f => {
+                const ext = f.key.toLowerCase().substring(f.key.lastIndexOf('.'));
+                return audioExtensions.includes(ext);
+            });
+            
+            if (audioFiles.length === 0) {
+                throw new Error('音声ファイルが見つかりません（.wav, .mp3など）');
+            }
+            
+            // 個別音声（001_, 002_など）と全体音声（text_など）を分離
+            const individualFiles = [];
+            let fullAudioFile = null;
+            
+            for (const f of audioFiles) {
+                const filename = f.key;
+                // 数字3桁_で始まるファイルは個別音声
+                if (/^\d{3}_/.test(filename)) {
+                    individualFiles.push(f);
+                } 
+                // text_で始まる、または "full" を含むファイルは全体音声
+                else if (/^text_/i.test(filename) || /full/i.test(filename)) {
+                    fullAudioFile = f;
+                }
+                // それ以外で番号が含まれないファイルも全体音声候補
+                else if (!/\d{3}/.test(filename)) {
+                    fullAudioFile = f;
+                }
+                // それ以外は個別音声として扱う
+                else {
+                    individualFiles.push(f);
+                }
+            }
+            
+            // ファイル名でソート（001_, 002_などの番号順）
+            individualFiles.sort((a, b) => a.key.localeCompare(b.key, undefined, { numeric: true }));
+            
+            // ダウンロードURLを生成
+            const individualUrls = individualFiles.map(f => f.links.self + '?download=1');
+            const fullUrl = fullAudioFile ? fullAudioFile.links.self + '?download=1' : null;
+            
+            return {
+                individualUrls,
+                fullAudioUrl: fullUrl,
+                fullAudioFilename: fullAudioFile ? fullAudioFile.key : null
+            };
+        }
+        
+        // グロスの和訳辞書（SearchGlossベース - 拡張版）
+        const glossDictionary = {
+            // 格標識
+            'nom': '主格',
+            'gen': '属格',
+            'acc': '対格',
+            'dat': '与格',
+            'abl': '奪格',
+            'ins': '具格',
+            'com': '共格',
+            'all': '向格',
+            'loc': '所格',
+            'voc': '呼格',
+            
+            // 格の変種
+            'nom1': '主格1',
+            'nom2': '主格2',
+            'gen1': '属格1',
+            'gen2': '属格2',
+            'acc1': '対格1',
+            'acc2': '対格2',
+            
+            // 時制・アスペクト
+            'pst': '過去',
+            'npst': '非過去',
+            'prs': '現在',
+            'fut': '未来',
+            'dfut': '遠い未来',
+            'prog': '進行',
+            'perf': '完了',
+            'ipfv': '未完了',
+            'pfv': '完了',
+            
+            // モダリティ
+            'pot': '可能',
+            'dub': '推量',
+            'pros': '推測',
+            'seem': '推測',
+            'chs': '推定',
+            'hs': '伝聞',
+            'asr': '断定',
+            'cnf': '確認',
+            'q': '疑問',
+            
+            // 法
+            'imp': '命令',
+            'proh': '禁止',
+            'opt': '希求',
+            'int': '意志',
+            'hort': '勧誘',
+            'cond': '条件',
+            
+            // 態
+            'pass': '受身',
+            'caus': '使役',
+            'cvlz': '使役化',
+            'refl': '再帰',
+            'rfl': '再帰',
+            'recip': '相互',
+            
+            // 談話機能
+            'top': '主題',
+            'foc': '焦点',
+            'otop': '対比主題',
+            'thm': 'テーマ',
+            'quot': '引用',
+            'dsc': '談話標識',
+            'fil': 'フィラー',
+            
+            // 数・人称
+            'sg': '単数',
+            'pl': '複数',
+            'du': '双数',
+            '1': '1人称',
+            '2': '2人称',
+            '3': '3人称',
+            'incl': '包括',
+            'excl': '除外',
+            
+            // 敬語
+            'hon': '敬語',
+            'hum': '謙譲',
+            'pol': '丁寧',
+            'adr': '敬語',
+            
+            // 接続
+            'seq': '継起',
+            'sim': '同時',
+            'ant': '先行',
+            'csl': '理由',
+            'rsl': '結果',
+            'cnc': '逆接',
+            'add': '添加',
+            
+            // 派生
+            'nlz': '名詞化',
+            'cnlz': '名詞化',
+            'vlz': '動詞化',
+            'adj': '形容詞',
+            'adv': '副詞',
+            
+            // その他
+            'neg': '否定',
+            'cop': 'コピュラ',
+            'lv': '軽動詞',
+            'aux': '助動詞',
+            'clf': '類別詞',
+            'dim': '指小辞',
+            'aug': '増大辞',
+            'ben': '受益',
+            'mal': '被害',
+            'inf': '中止',
+            'cvb': '副動詞',
+            'ptcp': '分詞',
+            'ger': '動名詞',
+            
+            // 指示
+            'prox': '近称',
+            'med': '中称',
+            'dist': '遠称',
+            'indf': '不定',
+            
+            // 限定
+            'aprx': '近似',
+            'lmt': '限界',
+            'only': '限定',
+            'also': 'も',
+            'even': 'さえ',
+            
+            // その他の機能
+            'crcm': '状況',
+            'onm': 'オノマトペ',
+            'intj': '間投詞',
+            'conn': '接続詞',
+            'prt': '助詞',
+            'post': '後置詞',
+            'prep': '前置詞',
+            
+            // 方言特有のグロス（必要に応じて追加）
+            'evid': '証拠性',
+            'mir': '意外性',
+            'exp': '経験',
+            'hab': '習慣',
+            'iter': '反復',
+            'sem': '瞬間',
+            'tel': '完成',
+            'atel': '非完成',
+            'inch': '起動',
+            'term': '終結',
+            'cont': '継続',
+            'punc': '瞬時',
+            'dur': '持続',
+            'freq': '頻度',
+            'distr': '配分',
+            'coll': '集合',
+            'assoc': '随伴',
+            'priv': '欠如',
+            'poss': '所有',
+            'part': '部分',
+            'temp': '時',
+            'mann': '様態',
+            'purp': '目的',
+            'inst': '道具',
+            'conc': '譲歩',
+            'comp': '比較',
+            'super': '最上級',
+            'equ': '同等',
+            'sim': '類似',
+            'diff': '相違'
+        };
+        
+        
+        // DOMの読み込み完了後に初期化
+        window.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            
+            // 埋め込みデータがある場合は自動的に処理
+            if (window.embeddedData) {
+                processFiles();
+            }
+        });
+        
+        // イベントリスナーの設定
+        function setupEventListeners() {
+            // ファイル選択時の処理
+            const dataFile = document.getElementById('dataFile');
+            if (dataFile) dataFile.addEventListener('change', checkFiles);
+            
+            // 処理ボタンのクリック
+            const processButton = document.getElementById('processButton');
+            if (processButton) processButton.addEventListener('click', processFiles);
+            
+            // 全体音声再生ボタン
+            const playAllBtn = document.getElementById('playAllBtn');
+            if (playAllBtn) playAllBtn.addEventListener('click', playFullAudio);
+            
+            // ダウンロードボタンのクリック
+            const downloadBtn = document.getElementById('downloadBtn');
+            if (downloadBtn) downloadBtn.addEventListener('click', downloadHTML);
+            
+            // Zenodo取得ボタン
+            const zenodoFetchBtn = document.getElementById('zenodoFetchBtn');
+            if (zenodoFetchBtn) {
+                zenodoFetchBtn.addEventListener('click', async function() {
+                    const zenodoInput = document.getElementById('zenodoUrl');
+                    const zenodoStatus = document.getElementById('zenodoStatus');
+                    const fullAudioUrlInput = document.getElementById('fullAudioUrl');
+                    const recordUrl = zenodoInput.value.trim();
+                    
+                    if (!recordUrl) {
+                        zenodoStatus.textContent = '❌ ZenodoレコードURLを入力してください';
+                        zenodoStatus.className = 'zenodo-status error';
+                        return;
+                    }
+                    
+                    // ボタンを無効化
+                    zenodoFetchBtn.disabled = true;
+                    zenodoFetchBtn.textContent = '⏳ 取得中...';
+                    zenodoStatus.textContent = 'Zenodo APIに接続中...';
+                    zenodoStatus.className = 'zenodo-status';
+                    
+                    try {
+                        const result = await fetchZenodoFiles(recordUrl);
+                        
+                        // 個別音声URLsに設定
+                        audioUrls = result.individualUrls;
+                        
+                        // 全体音声URLを設定
+                        if (result.fullAudioUrl && fullAudioUrlInput) {
+                            fullAudioUrl = result.fullAudioUrl;
+                            fullAudioUrlInput.value = result.fullAudioUrl;
+                        }
+                        
+                        // 手動入力エリアにもURLリストを表示
+                        const manualUrlList = document.getElementById('manualUrlList');
+                        if (manualUrlList) {
+                            manualUrlList.value = result.individualUrls.join('\n');
+                        }
+                        const manualUrlCount = document.getElementById('manualUrlCount');
+                        if (manualUrlCount) {
+                            manualUrlCount.textContent = `✅ ${result.individualUrls.length}件のURL`;
+                            manualUrlCount.className = 'manual-url-count has-urls';
+                        }
+                        
+                        // ステータスメッセージ作成
+                        let statusMsg = `✅ ${result.individualUrls.length}件の個別音声`;
+                        if (result.fullAudioUrl) {
+                            statusMsg += ` + 全体音声（${result.fullAudioFilename}）`;
+                        }
+                        statusMsg += 'を取得しました';
+                        
+                        zenodoStatus.textContent = statusMsg;
+                        zenodoStatus.className = 'zenodo-status success';
+                        
+                        // 処理ボタンの状態を更新
+                        checkFiles();
+                        
+                    } catch (err) {
+                        zenodoStatus.textContent = '❌ ' + err.message;
+                        zenodoStatus.className = 'zenodo-status error';
+                    } finally {
+                        zenodoFetchBtn.disabled = false;
+                        zenodoFetchBtn.textContent = '📥 取得';
+                    }
+                });
+            }
+            
+            // 手動URL入力エリア
+            const manualUrlList = document.getElementById('manualUrlList');
+            if (manualUrlList) {
+                manualUrlList.addEventListener('input', function(e) {
+                    const text = e.target.value;
+                    const urls = text.trim().split('\n')
+                        .map(u => u.trim())
+                        .filter(u => u && u.startsWith('http'));
+                    
+                    audioUrls = urls;
+                    
+                    const countEl = document.getElementById('manualUrlCount');
+                    if (countEl) {
+                        if (urls.length > 0) {
+                            countEl.textContent = `✅ ${urls.length}件のURL`;
+                            countEl.className = 'manual-url-count has-urls';
+                        } else {
+                            countEl.textContent = '';
+                            countEl.className = 'manual-url-count';
+                        }
+                    }
+                    
+                    checkFiles();
+                });
+            }
+            
+            // グロスクリックイベント
+            document.addEventListener('click', async function(e) {
+                if (e.target.classList.contains('gloss-clickable')) {
+                    e.stopPropagation();
+                    const gloss = e.target.dataset.gloss;
+                    await showGlossTooltip(gloss, e.target);
+                } else if (!e.target.closest('.gloss-tooltip')) {
+                    hideGlossTooltip();
+                }
+            });
+            
+            // 音声終了時の処理
+            const audio = document.getElementById('audio');
+            if (audio) {
+                audio.addEventListener('ended', function() {
+                    updatePlayingState(null);
+                });
+                
+                audio.addEventListener('timeupdate', updateProgress);
+            }
+            
+            // 背景画像アップロードの設定
+            setupHeaderImageUpload();
+        }
+        
+        // ファイルが選択されているかチェック
+        function checkFiles() {
+            const dataFile = document.getElementById('dataFile').files[0];
+            const processButton = document.getElementById('processButton');
+            
+            // データファイルがあり、かつZenodoから取得済み
+            processButton.disabled = !(dataFile && audioUrls.length > 0);
+        }
+        
+        // ファイルを処理
+        
+        // ファイルを処理（埋め込みデータ版）
+        async function processFiles() {
+            // 埋め込まれたデータをチェック
+            if (window.embeddedData) {
+                examples = window.embeddedData.examples;
+                audioUrls = window.embeddedData.audioUrls;
+                fullAudioUrl = window.embeddedData.fullAudioUrl;
+                
+                // タイトルサイズを復元
+                if (window.embeddedData.titleSize) {
+                    setTitleSize(window.embeddedData.titleSize);
+                }
+                
+                // サブタイトルサイズを復元
+                if (window.embeddedData.subtitleSize) {
+                    setSubtitleSize(window.embeddedData.subtitleSize);
+                }
+                
+                // 背景画像を復元
+                if (window.embeddedData.headerImage) {
+                    setHeaderImage(window.embeddedData.headerImage);
+                }
+                
+                console.log('埋め込まれたデータを使用します');
+                console.log(`例文数: ${examples.length}`);
+                console.log(`音声URL数: ${audioUrls.length}`);
+                
+                // コンテンツを表示
+                displayContent();
+                
+                // アップロードセクションを非表示
+                const uploadSection = document.getElementById('uploadSection');
+                if (uploadSection) {
+                    uploadSection.style.display = 'none';
+                }
+                document.getElementById('contentSection').style.display = 'block';
+                
+                return;
+            }
+            
+            // 元のprocessFiles関数のコード
+            
+            const dataFile = document.getElementById('dataFile').files[0];
+            const titleInput = document.getElementById('titleInput').value.trim();
+            const subtitleInput = document.getElementById('subtitleInput').value.trim();
+            
+            try {
+                showStatus('ファイルを処理中...', 'info');
+                
+                // タイトルとサブタイトルを設定
+                if (titleInput) {
+                    document.getElementById('pageTitle').textContent = titleInput;
+                }
+                if (subtitleInput) {
+                    document.getElementById('pageSubtitle').textContent = subtitleInput;
+                }
+                
+                // 背景画像を適用
+                if (headerImageData) {
+                    setHeaderImage(headerImageData);
+                }
+                
+                // 全体音声URLを確認（手動で変更されている可能性があるため）
+                const fullAudioUrlInput = document.getElementById('fullAudioUrl');
+                const fullAudioInputValue = fullAudioUrlInput ? fullAudioUrlInput.value.trim() : '';
+                if (fullAudioInputValue) {
+                    fullAudioUrl = fullAudioInputValue;
+                }
+                
+                console.log(`音声URLを${audioUrls.length}個読み込みました`);
+                if (fullAudioUrl) {
+                    console.log('全体音声URL:', fullAudioUrl);
+                }
+                
+                // データファイルの処理（テキストまたはPDF）
+                if (dataFile.name.endsWith('.txt')) {
+                    await processTextFile(dataFile);
+                } else if (dataFile.name.endsWith('.pdf')) {
+                    await processPDF(dataFile);
+                }
+                
+                // コンテンツを表示
+                displayContent();
+                
+                showStatus('処理が完了しました！', 'success');
+                
+                // 2秒後にアップロードセクションを非表示
+                setTimeout(() => {
+                    document.getElementById('uploadSection').style.display = 'none';
+                    document.getElementById('contentSection').style.display = 'block';
+                }, 2000);
+                
+            } catch (error) {
+                showStatus('エラー: ' + error.message, 'error');
+                console.error(error);
+            }
+        }
+        
+        // テキストファイルを処理
+        async function processTextFile(file) {
+            const text = await file.text();
+            const lines = text.split('\n');
+            
+            examples = [];
+            let lineIndex = 0;
+            
+            while (lineIndex < lines.length) {
+                const line = lines[lineIndex].trim();
+                
+                // 例文番号の検出（話者名付きにも対応）
+                // 形式: (1) または (1) [話者名]
+                const numberMatch = line.match(/^\((\d+)\)\s*(?:\[(.+?)\])?(.*)$/);
+                if (numberMatch) {
+                    const id = parseInt(numberMatch[1]);
+                    const speaker = numberMatch[2] || ''; // 話者名（あれば）
+                    const remainingText = numberMatch[3] ? numberMatch[3].trim() : '';
+                    
+                    const currentExample = {
+                        id: id,
+                        speaker: speaker,
+                        original: '',
+                        gloss: '',
+                        japanese: ''
+                    };
+                    
+                    // 次の行から内容を収集
+                    const contentLines = [];
+                    
+                    // 番号行に残りのテキストがある場合は追加
+                    if (remainingText) {
+                        contentLines.push(remainingText);
+                    }
+                    
+                    lineIndex++;
+                    
+                    // 次の例文番号が来るまで行を収集
+                    while (lineIndex < lines.length) {
+                        const nextLine = lines[lineIndex].trim();
+                        
+                        // 次の例文番号に到達したら終了
+                        if (nextLine.match(/^\((\d+)\)\s*(?:\[.+?\])?/)) {
+                            break;
+                        }
+                        
+                        // 空行はスキップするが、収集は続ける
+                        if (nextLine) {
+                            contentLines.push(nextLine);
+                        }
+                        
+                        lineIndex++;
+                    }
+                    
+                    // 収集した行数に基づいて形式を判定
+                    if (contentLines.length === 2) {
+                        // 2行形式: 例文、日本語訳
+                        currentExample.original = contentLines[0];
+                        currentExample.japanese = contentLines[1];
+                        currentExample.gloss = ''; // グロスなし
+                    } else if (contentLines.length === 3) {
+                        // 3行形式: 原文、グロス、日本語訳
+                        currentExample.original = contentLines[0];
+                        currentExample.gloss = contentLines[1];
+                        currentExample.japanese = contentLines[2];
+                    } else if (contentLines.length >= 4) {
+                        // 4行形式: スペースあり例文、形態素境界入り例文、グロス、日本語訳
+                        currentExample.originalSpaced = contentLines[0]; // スペースあり例文
+                        currentExample.original = contentLines[1]; // 形態素境界入り例文
+                        currentExample.gloss = contentLines[2];
+                        currentExample.japanese = contentLines[3];
+                        
+                        // 日本語訳が複数行にわたる場合は結合
+                        for (let i = 4; i < contentLines.length; i++) {
+                            if (contentLines[i].match(/[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/)) {
+                                currentExample.japanese += contentLines[i];
+                            }
+                        }
+                    }
+                    
+                    // 例文を追加
+                    if (currentExample.original) {
+                        examples.push(currentExample);
+                    }
+                } else {
+                    lineIndex++;
+                }
+            }
+            
+            console.log(`テキストファイルから${examples.length}個の例文を抽出しました`);
+            
+            // デバッグ用：最初の3つの例文を表示
+            examples.slice(0, 3).forEach(ex => {
+                console.log(`例文${ex.id}:`);
+                console.log(`  原文: ${ex.original}`);
+                console.log(`  グロス: ${ex.gloss}`);
+                console.log(`  日本語: ${ex.japanese}`);
+            });
+        }
+        
+        // PDFを処理
+        async function processPDF(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            
+            examples = [];
+            let allTextItems = [];
+            
+            // 全ページのテキストアイテムを収集
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                const page = await pdf.getPage(pageNum);
+                const textContent = await page.getTextContent();
+                
+                textContent.items.forEach(item => {
+                    if (item.str.trim()) {
+                        allTextItems.push({
+                            text: item.str,
+                            x: item.transform[4],
+                            y: item.transform[5],
+                            page: pageNum
+                        });
+                    }
+                });
+            }
+            
+            // Y座標でソート（上から下へ）
+            allTextItems.sort((a, b) => {
+                if (a.page !== b.page) return a.page - b.page;
+                return b.y - a.y;
+            });
+            
+            // 同じ行のアイテムをグループ化
+            let lines = [];
+            let currentLine = [];
+            let lastY = null;
+            
+            allTextItems.forEach(item => {
+                if (lastY === null || Math.abs(item.y - lastY) < 5) {
+                    currentLine.push(item);
+                } else {
+                    if (currentLine.length > 0) {
+                        // X座標でソート（左から右へ）
+                        currentLine.sort((a, b) => a.x - b.x);
+                        const lineText = currentLine.map(i => i.text).join(' ');
+                        lines.push(lineText);
+                    }
+                    currentLine = [item];
+                }
+                lastY = item.y;
+            });
+            
+            // 最後の行を追加
+            if (currentLine.length > 0) {
+                currentLine.sort((a, b) => a.x - b.x);
+                const lineText = currentLine.map(i => i.text).join(' ');
+                lines.push(lineText);
+            }
+            
+            // 例文を解析
+            let currentExample = null;
+            let expectingGloss = false;
+            let expectingJapanese = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                // 例文番号の検出
+                const numberMatch = line.match(/^[\(（](\d+)[\)）]\s*(.+)$/);
+                if (numberMatch) {
+                    // 前の例文を保存
+                    if (currentExample) {
+                        examples.push(currentExample);
+                    }
+                    
+                    currentExample = {
+                        id: parseInt(numberMatch[1]),
+                        original: numberMatch[2].trim(),
+                        gloss: '',
+                        japanese: ''
+                    };
+                    expectingGloss = true;
+                    expectingJapanese = false;
+                } else if (currentExample && expectingGloss) {
+                    // グロス行（小文字、ピリオド、大文字を含む）
+                    if (line.match(/^[a-zA-Z0-9\.\-\s]+$/)) {
+                        currentExample.gloss = line;
+                        expectingGloss = false;
+                        expectingJapanese = true;
+                    }
+                } else if (currentExample && expectingJapanese) {
+                    // 日本語訳
+                    if (line.match(/[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/)) {
+                        currentExample.japanese = line;
+                        expectingJapanese = false;
+                    }
+                }
+            }
+            
+            // 最後の例文を保存
+            if (currentExample) {
+                examples.push(currentExample);
+            }
+            
+            console.log(`PDFから${examples.length}個の例文を抽出しました`);
+            
+            // デバッグ用：最初の3つの例文を表示
+            examples.slice(0, 3).forEach(ex => {
+                console.log(`例文${ex.id}:`);
+                console.log(`  原文: ${ex.original}`);
+                console.log(`  グロス: ${ex.gloss}`);
+                console.log(`  日本語: ${ex.japanese}`);
+            });
+        }
+        
+        // コンテンツを表示
+        function displayContent() {
+            const exampleList = document.getElementById('exampleList');
+            const exampleCount = document.getElementById('exampleCount');
+            const playAllBtn = document.getElementById('playAllBtn');
+            
+            // 例文数を表示
+            exampleCount.textContent = examples.length;
+            
+            // 例文リストをクリア
+            exampleList.innerHTML = '';
+            
+            // 各例文を表示
+            examples.forEach((example, index) => {
+                const exampleItem = createExampleElement(example, index);
+                exampleList.appendChild(exampleItem);
+            });
+            
+            // 全体音声ボタンの表示/非表示
+            if (!fullAudioUrl) {
+                playAllBtn.style.display = 'none';
+            } else {
+                playAllBtn.style.display = 'flex';
+            }
+        }
+        
+        // 例文要素を作成
+        function createExampleElement(example, index) {
+            const div = document.createElement('div');
+            div.className = 'example-item';
+            div.dataset.id = example.id;
+            
+            // インターリニア形式で表示
+            let interlinearHTML;
+            if (example.originalSpaced) {
+                // 4行形式の場合
+                interlinearHTML = createInterlinearHTML4Line(example.originalSpaced, example.original, example.gloss);
+            } else {
+                // 2行または3行形式の場合
+                interlinearHTML = createInterlinearHTML(example.original, example.gloss);
+            }
+            
+            // 話者名の表示（あれば）
+            const speakerHTML = example.speaker 
+                ? `<span class="speaker-name">[${example.speaker}]</span>` 
+                : '';
+            
+            div.innerHTML = `
+                <div class="example-number">(${example.id}) ${speakerHTML}</div>
+                <div class="example-text">
+                    <div class="interlinear-container">
+                        ${interlinearHTML}
+                    </div>
+                    <div class="translation-text">${example.japanese}</div>
+                </div>
+                <div class="play-icon">▶</div>
+            `;
+            
+            // クリックイベントを追加
+            div.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('gloss-clickable')) {
+                    playExample(example.id);
+                }
+            });
+            
+            return div;
+        }
+        
+        // インターリニア形式のHTMLを生成
+        function createInterlinearHTML(originalText, glossText) {
+            const originalWords = originalText.split(/\s+/);
+            const glossWords = glossText.split(/\s+/);
+            
+            let html = '<div class="interlinear-row">';
+            
+            for (let i = 0; i < Math.max(originalWords.length, glossWords.length); i++) {
+                const originalWord = originalWords[i] || '';
+                const glossWord = glossWords[i] || '';
+                
+                // グロスをクリック可能にする
+                const clickableGloss = makeGlossClickable(glossWord);
+                
+                html += `
+                    <div class="word-group">
+                        <div class="original-word">${originalWord}</div>
+                        <div class="gloss-word">${clickableGloss}</div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
+        // 4行形式のインターリニアHTMLを生成
+        function createInterlinearHTML4Line(spacedText, boundaryText, glossText) {
+            const spacedWords = spacedText.split(/\s+/);
+            const boundaryWords = boundaryText.split(/\s+/);
+            const glossWords = glossText.split(/\s+/);
+            
+            let html = '<div class="interlinear-row">';
+            
+            for (let i = 0; i < Math.max(spacedWords.length, boundaryWords.length, glossWords.length); i++) {
+                const spacedWord = spacedWords[i] || '';
+                const boundaryWord = boundaryWords[i] || '';
+                const glossWord = glossWords[i] || '';
+                
+                // グロスをクリック可能にする
+                const clickableGloss = makeGlossClickable(glossWord);
+                
+                html += `
+                    <div class="word-group">
+                        <div class="original-word">${spacedWord}</div>
+                        <div class="original-word" style="font-size: 16px; color: #444; font-weight: normal;">${boundaryWord}</div>
+                        <div class="gloss-word">${clickableGloss}</div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
+        // グロスをクリック可能にする
+        function makeGlossClickable(glossText) {
+            // グロスパターンの検出（英字とピリオドの組み合わせ）
+            const glossPattern = /[a-zA-Z]+(\.[a-zA-Z0-9]+)*/g;
+            
+            return glossText.replace(glossPattern, (match) => {
+                // 日本語が含まれている場合は除外
+                if (match.match(/[ぁ-んァ-ヶー一-龯]/)) {
+                    return match;
+                }
+                return `<span class="gloss-clickable" data-gloss="${match}">${match}</span>`;
+            });
+        }
+        
+        // 音声を再生
+        async function playExample(id) {
+            const audio = document.getElementById('audio');
+            const exampleItem = document.querySelector(`[data-id="${id}"]`);
+            
+            if (!audio || !exampleItem) {
+                console.error('Audio element or example item not found');
+                return;
+            }
+            
+            // 既に再生中の場合は停止
+            if (currentlyPlaying === id && !audio.paused) {
+                audio.pause();
+                updatePlayingState(null);
+                return;
+            }
+            
+            try {
+                // 対応する音声URLを取得
+                const audioUrl = audioUrls[id - 1];
+                if (!audioUrl) {
+                    throw new Error(`音声ファイルが見つかりません (例文 ${id})`);
+                }
+                
+                console.log(`Playing audio ${id}: ${audioUrl}`);
+                
+                // 音声を停止してリセット
+                audio.pause();
+                audio.currentTime = 0;
+                
+                // 直接URLを使用（CORSプロキシは最後の手段として）
+                let finalUrl = audioUrl;
+                
+                // 新しい音声をロード
+                audio.src = finalUrl;
+                
+                // ロード完了を待ってから再生
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            console.log('Audio playback started successfully');
+                            updatePlayingState(id);
+                        })
+                        .catch(async (error) => {
+                            console.error('Initial playback failed:', error);
+                            
+                            // CORSエラーの場合はプロキシを試す
+                            if (error.name === 'NotAllowedError' || error.name === 'NotSupportedError') {
+                                console.log('Trying with CORS proxy...');
+                                
+                                // CORSプロキシを使用
+                                finalUrl = 'https://corsproxy.io/?' + encodeURIComponent(audioUrl);
+                                audio.src = finalUrl;
+                                
+                                try {
+                                    await audio.play();
+                                    updatePlayingState(id);
+                                    console.log('Playback successful with CORS proxy');
+                                } catch (proxyError) {
+                                    console.error('CORS proxy also failed:', proxyError);
+                                    
+                                    // 別のCORSプロキシを試す
+                                    finalUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(audioUrl);
+                                    audio.src = finalUrl;
+                                    
+                                    try {
+                                        await audio.play();
+                                        updatePlayingState(id);
+                                        console.log('Playback successful with alternative proxy');
+                                    } catch (altProxyError) {
+                                        console.error('All playback attempts failed:', altProxyError);
+                                        showStatus(`音声の再生に失敗しました (例文 ${id})。ブラウザの設定やネットワークを確認してください。`, 'error');
+                                    }
+                                }
+                            }
+                        });
+                }
+                
+            } catch (error) {
+                console.error('音声再生エラー:', error);
+                showStatus('音声の再生に失敗しました: ' + error.message, 'error');
+            }
+        }
+        
+        // 全体音声を再生
+        async function playFullAudio() {
+            const audio = document.getElementById('audio');
+            const playAllBtn = document.getElementById('playAllBtn');
+            
+            if (!fullAudioUrl) {
+                showStatus('全体音声のURLが設定されていません', 'error');
+                return;
+            }
+            
+            // 既に再生中の場合は停止
+            if (currentlyPlaying === 'full' && !audio.paused) {
+                audio.pause();
+                updatePlayingState(null);
+                return;
+            }
+            
+            try {
+                // 音声を停止してリセット
+                audio.pause();
+                audio.currentTime = 0;
+                
+                // 直接URLを使用
+                let finalUrl = fullAudioUrl;
+                
+                console.log('Playing full audio:', finalUrl);
+                
+                audio.src = finalUrl;
+                
+                // 再生を試みる
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            console.log('Full audio playback started successfully');
+                            playAllBtn.classList.add('playing');
+                            playAllBtn.querySelector('.button-text').textContent = '停止';
+                            playAllBtn.querySelector('.button-icon').textContent = '⏸';
+                            updatePlayingState('full');
+                        })
+                        .catch(async (error) => {
+                            console.error('Full audio playback failed:', error);
+                            
+                            // CORSエラーの場合はプロキシを試す
+                            if (error.name === 'NotAllowedError' || error.name === 'NotSupportedError') {
+                                console.log('Trying with CORS proxy for full audio...');
+                                
+                                finalUrl = 'https://corsproxy.io/?' + encodeURIComponent(fullAudioUrl);
+                                audio.src = finalUrl;
+                                
+                                try {
+                                    await audio.play();
+                                    playAllBtn.classList.add('playing');
+                                    playAllBtn.querySelector('.button-text').textContent = '停止';
+                                    playAllBtn.querySelector('.button-icon').textContent = '⏸';
+                                    updatePlayingState('full');
+                                } catch (proxyError) {
+                                    console.error('CORS proxy also failed:', proxyError);
+                                    showStatus('全体音声の再生に失敗しました', 'error');
+                                }
+                            }
+                        });
+                }
+                
+            } catch (error) {
+                console.error('全体音声の再生エラー:', error);
+                showStatus('全体音声の再生に失敗しました: ' + error.message, 'error');
+            }
+        }
+        
+        // 再生状態を更新
+        function updatePlayingState(id) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const currentExample = document.getElementById('currentExample');
+            const playAllBtn = document.getElementById('playAllBtn');
+            
+            // すべての例文のハイライトを解除
+            document.querySelectorAll('.example-item').forEach(item => {
+                item.classList.remove('playing');
+                item.querySelector('.play-icon').textContent = '▶';
+            });
+            
+            // 全体音声ボタンのリセット
+            playAllBtn.classList.remove('playing');
+            playAllBtn.querySelector('.button-text').textContent = '全体音声を再生';
+            playAllBtn.querySelector('.button-icon').textContent = '▶';
+            
+            if (id === 'full') {
+                // 全体音声再生中
+                currentExample.textContent = '全体音声';
+                audioPlayer.classList.add('active');
+                playAllBtn.classList.add('playing');
+                playAllBtn.querySelector('.button-text').textContent = '停止';
+                playAllBtn.querySelector('.button-icon').textContent = '⏸';
+            } else if (id !== null) {
+                // 個別例文再生中
+                const playingItem = document.querySelector(`[data-id="${id}"]`);
+                if (playingItem) {
+                    playingItem.classList.add('playing');
+                    playingItem.querySelector('.play-icon').textContent = '⏸';
+                }
+                currentExample.textContent = `例文 (${id})`;
+                audioPlayer.classList.add('active');
+            } else {
+                // 停止
+                audioPlayer.classList.remove('active');
+                document.getElementById('progressBar').style.width = '0%';
+            }
+            
+            currentlyPlaying = id;
+        }
+        
+        // 進行状況を更新
+        function updateProgress() {
+            const audio = document.getElementById('audio');
+            const progressBar = document.getElementById('progressBar');
+            
+            if (audio.duration) {
+                const progress = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = progress + '%';
+            }
+        }
+        
+        // グロスの吹き出しを表示
+        async function showGlossTooltip(gloss, element) {
+            const tooltip = document.getElementById('glossTooltip');
+            const glossTitle = document.getElementById('glossTitle');
+            const glossDescription = document.getElementById('glossDescription');
+            
+            // グロスの翻訳を取得
+            const translation = await getGlossTranslation(gloss);
+            
+            glossTitle.textContent = gloss.toUpperCase();
+            glossDescription.textContent = translation;
+            
+            // 位置を計算
+            const rect = element.getBoundingClientRect();
+            const tooltipWidth = 300;
+            let left = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+            const top = rect.top - 80;
+            
+            // 画面からはみ出ないように調整
+            if (left < 10) left = 10;
+            if (left + tooltipWidth > window.innerWidth - 10) {
+                left = window.innerWidth - tooltipWidth - 10;
+            }
+            
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+            tooltip.classList.add('show');
+        }
+        
+        // グロスの吹き出しを非表示
+        function hideGlossTooltip() {
+            const tooltip = document.getElementById('glossTooltip');
+            if (tooltip) {
+                tooltip.classList.remove('show');
+            }
+        }
+        
+        // 複合グロスを解析して説明を生成
+        async function getGlossTranslation(gloss) {
+            // 内蔵辞書から検索
+            const parts = gloss.toLowerCase().split('.');
+            const translations = [];
+            let allFound = true;
+            
+            for (const part of parts) {
+                if (glossDictionary[part]) {
+                    translations.push(glossDictionary[part]);
+                } else if (part.match(/^\d+$/)) {
+                    translations.push(part + '人称');
+                } else {
+                    // 辞書に見つからない場合
+                    allFound = false;
+                    translations.push(part.toUpperCase());
+                }
+            }
+            
+            if (!allFound) {
+                // 一つでも見つからないグロスがあった場合
+                return 'SearchGlossになし';
+            }
+            
+            if (translations.length > 1) {
+                return translations.join('・');
+            } else if (translations.length === 1) {
+                return translations[0];
+            } else {
+                return 'SearchGlossになし';
+            }
+        }
+        
+        // SearchGlossからデータを取得（現在は使用しない）
+        async function fetchFromSearchGloss(gloss) {
+            // 将来的にオンラインのSearchGlossと連携する場合のプレースホルダー
+            return null;
+        }
+        
+        // ステータスメッセージを表示
+        function showStatus(message, type = 'info') {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message ' + type;
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusMessage.className = 'status-message';
+                }, 5000);
+            }
+        }
+        
+        // HTMLをダウンロード
+        function downloadHTML() {
+            // 現在のページのHTMLをクローン
+            const htmlClone = document.documentElement.cloneNode(true);
+            
+            // アップロードセクションを削除
+            const uploadSection = htmlClone.querySelector('#uploadSection');
+            if (uploadSection) {
+                uploadSection.remove();
+            }
+            
+            ytLinks.forEach(el => el.remove());
+            
+            // 著作権情報を変更
+            const credits = htmlClone.querySelector('.credits');
+            if (credits) {
+                credits.innerHTML = '© InTEx: Interactive Text Gallery Generator for Field Linguists | DOI: <a href="https://doi.org/10.5281/zenodo.16732543" target="_blank">10.5281/zenodo.16732543</a>';
+            }
+            
+            // コンテンツセクションを表示
+            const contentSection = htmlClone.querySelector('#contentSection');
+            if (contentSection) {
+                contentSection.style.display = 'block';
+            }
+            
+            // タイトルのフォントサイズを適用
+            const clonedTitle = htmlClone.querySelector('#pageTitle');
+            if (clonedTitle) {
+                clonedTitle.style.fontSize = currentTitleSize + 'rem';
+            }
+            
+            // スライダーの値を現在の値に設定
+            const clonedSlider = htmlClone.querySelector('#titleSizeSlider');
+            if (clonedSlider) {
+                clonedSlider.setAttribute('value', currentTitleSize);
+            }
+            
+            // サイズ表示を更新
+            const clonedDisplay = htmlClone.querySelector('#titleSizeDisplay');
+            if (clonedDisplay) {
+                clonedDisplay.textContent = currentTitleSize + 'rem';
+            }
+            
+            // サブタイトルのフォントサイズを適用
+            const clonedSubtitle = htmlClone.querySelector('#pageSubtitle');
+            if (clonedSubtitle) {
+                clonedSubtitle.style.fontSize = currentSubtitleSize + 'px';
+            }
+            
+            // サブタイトルスライダーの値を現在の値に設定
+            const clonedSubtitleSlider = htmlClone.querySelector('#subtitleSizeSlider');
+            if (clonedSubtitleSlider) {
+                clonedSubtitleSlider.setAttribute('value', currentSubtitleSize);
+            }
+            
+            // サブタイトルサイズ表示を更新
+            const clonedSubtitleDisplay = htmlClone.querySelector('#subtitleSizeDisplay');
+            if (clonedSubtitleDisplay) {
+                clonedSubtitleDisplay.textContent = currentSubtitleSize + 'px';
+            }
+            
+            // 背景画像を適用
+            const clonedHeader = htmlClone.querySelector('.header-section');
+            if (clonedHeader && headerImageData) {
+                clonedHeader.style.backgroundImage = `url(${headerImageData})`;
+                clonedHeader.classList.add('has-bg-image');
+            }
+            
+            // 例文リストをクリア（JavaScriptで再生成するため）
+            const exampleList = htmlClone.querySelector('#exampleList');
+            if (exampleList) {
+                exampleList.innerHTML = '';
+            }
+            
+            // スクリプトタグを探す
+            const scripts = htmlClone.getElementsByTagName('script');
+            let mainScript = null;
+            
+            for (let script of scripts) {
+                if (script.textContent.includes('let examples = []')) {
+                    mainScript = script;
+                    break;
+                }
+            }
+            
+            if (mainScript) {
+                // 現在のデータを埋め込むための新しいスクリプトを作成
+                const dataScript = document.createElement('script');
+                dataScript.textContent = `
+                    // 埋め込まれたデータ
+                    window.embeddedData = {
+                        examples: ${JSON.stringify(examples)},
+                        audioUrls: ${JSON.stringify(audioUrls)},
+                        fullAudioUrl: ${JSON.stringify(fullAudioUrl)},
+                        titleSize: ${currentTitleSize},
+                        subtitleSize: ${currentSubtitleSize},
+                        headerImage: ${JSON.stringify(headerImageData)}
+                    };
+                `;
+                
+                // メインスクリプトの前にデータスクリプトを挿入
+                mainScript.parentNode.insertBefore(dataScript, mainScript);
+                
+                // メインスクリプトの内容を修正
+                let scriptContent = mainScript.textContent;
+                
+                // processFiles関数を修正（埋め込まれたデータを使用するバージョン）
+                const modifiedProcessFiles = `
+        // ファイルを処理（埋め込みデータ版）
+        async function processFiles() {
+            // 埋め込まれたデータをチェック
+            if (window.embeddedData) {
+                examples = window.embeddedData.examples;
+                audioUrls = window.embeddedData.audioUrls;
+                fullAudioUrl = window.embeddedData.fullAudioUrl;
+                
+                // タイトルサイズを復元
+                if (window.embeddedData.titleSize) {
+                    setTitleSize(window.embeddedData.titleSize);
+                }
+                
+                // サブタイトルサイズを復元
+                if (window.embeddedData.subtitleSize) {
+                    setSubtitleSize(window.embeddedData.subtitleSize);
+                }
+                
+                // 背景画像を復元
+                if (window.embeddedData.headerImage) {
+                    setHeaderImage(window.embeddedData.headerImage);
+                }
+                
+                console.log('埋め込まれたデータを使用します');
+                console.log(\`例文数: \${examples.length}\`);
+                console.log(\`音声URL数: \${audioUrls.length}\`);
+                
+                // コンテンツを表示
+                displayContent();
+                
+                // アップロードセクションを非表示
+                const uploadSection = document.getElementById('uploadSection');
+                if (uploadSection) {
+                    uploadSection.style.display = 'none';
+                }
+                document.getElementById('contentSection').style.display = 'block';
+                
+                return;
+            }
+            
+            // 元のprocessFiles関数のコード
+            `;
+                
+                // processFiles関数を置き換え
+                scriptContent = scriptContent.replace(
+                    /async function processFiles\(\) {/,
+                    modifiedProcessFiles
+                );
+                
+                // DOMContentLoaded時に埋め込みデータをチェック
+                const initCode = `
+        // DOMの読み込み完了後に初期化
+        window.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            
+            // 埋め込みデータがある場合は自動的に処理
+            if (window.embeddedData) {
+                processFiles();
+            }
+        });`;
+                
+                scriptContent = scriptContent.replace(
+                    /\/\/ DOMの読み込み完了後に初期化[\s\S]*?}\);/,
+                    initCode
+                );
+                
+                mainScript.textContent = scriptContent;
+            }
+            
+            // HTMLを文字列に変換
+            let htmlContent = '<!DOCTYPE html>\n' + htmlClone.outerHTML;
+            
+            htmlContent = htmlContent.split('\n').filter(line => {
+            }).join('\n');
+            
+            // Blobを作成
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            
+            // ダウンロードリンクを作成
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            
+            // ファイル名を設定（タイトルが設定されている場合はそれを使用）
+            const pageTitle = document.getElementById('pageTitle').textContent;
+            const fileName = pageTitle !== 'グロス付きテキストビューア' 
+                ? `${pageTitle}.html` 
+                : 'intex_output.html';
+            
+            downloadLink.download = fileName;
+            
+            // リンクをクリックしてダウンロードを開始
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            
+            // メモリを解放
+            URL.revokeObjectURL(downloadLink.href);
+            
+            showStatus('HTMLファイルのダウンロードを開始しました', 'success');
+        }
+    </script>
+
+
+</body></html>
